@@ -208,16 +208,22 @@ select.mini{background:var(--s2);border:1px solid var(--border2);border-radius:4
 .cs-wrap.cs-mini .cs-input{font-size:10px;padding:5px 8px;}
 .cs-wrap.cs-mini .cs-item{font-size:10px;padding:6px 9px;}
 
+/* ── MOBILE TOGGLE BUTTON (hidden on desktop) ── */
+#mobileToggle{display:none;align-items:center;gap:5px;padding:0 12px 0 14px;margin-left:auto;margin-right:10px;background:transparent;color:var(--muted2);border:1px solid var(--border2);border-radius:6px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap;height:32px;}
+#mobileToggle:hover{color:var(--text);border-color:var(--text);}
+#mobileToggle.active{color:var(--cyan);border-color:var(--cyan);background:rgba(0,133,255,.08);}
+
 /* ── MOBILE ── */
 @media(max-width:768px){
   :root{--topbar-h:48px;}
   .ribbon-tabs,.ribbon-actions,.logo-sub{display:none;}
-  .ribbon-logo{min-width:unset;border-right:none;}
-  #app{padding-top:0;height:100vh;display:block;}
+  .ribbon-logo{min-width:unset;border-right:none;flex:1;}
+  #mobileToggle{display:flex;}
+  #app{padding-top:var(--topbar-h);height:100vh;overflow:hidden;}
   #mapWrap{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;height:auto;z-index:0;}
-  #sidebar{position:fixed;bottom:0;left:0;right:0;width:100%;min-width:unset;height:86vh;border-right:none;border-top:1px solid var(--border);border-radius:20px 20px 0 0;transform:translateY(calc(100% - 108px));transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:1000;box-shadow:0 -8px 40px rgba(0,0,0,.8);will-change:transform;display:flex;flex-direction:column;}
-  #sidebar.panel-open{transform:translateY(0);}
-  .panel-handle{display:flex;}
+  #sidebar{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;width:100%;min-width:unset;height:calc(100vh - var(--topbar-h));border-right:none;border-radius:0;overflow-y:auto;overflow-x:hidden;z-index:100;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+  #sidebar.panel-open{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .panel-handle{display:none;}
   .mobile-tabs{display:flex;}
   .stats{grid-template-columns:repeat(2,1fr);}
   .map-legend{display:none;}
@@ -247,6 +253,7 @@ select.mini{background:var(--s2);border:1px solid var(--border2);border-radius:4
     <div class="ribbon-tab" onclick="switchTab(1)">Ruta A→B</div>
     <div class="ribbon-tab" onclick="switchTab(2)">Multi-parada</div>
   </nav>
+  <button id="mobileToggle" onclick="toggleMobilePanel()">Lista &#9660;</button>
   <div class="ribbon-actions">
     <button class="ribbon-map-btn" onclick="fitAll()">Encuadrar</button>
     <button class="ribbon-map-btn" id="btnRadios">Radios</button>
@@ -258,7 +265,6 @@ select.mini{background:var(--s2);border:1px solid var(--border2);border-radius:4
 
   <!-- SIDEBAR -->
   <aside id="sidebar">
-    <div class="panel-handle" onclick="toggleMobilePanel()"><div class="panel-handle-bar"></div></div>
     <div class="mobile-tabs">
       <div class="tab active" onclick="switchTab(0)">Distancias</div>
       <div class="tab" onclick="switchTab(1)">Ruta A→B</div>
@@ -472,11 +478,22 @@ function switchTab(n){
   document.querySelectorAll(".mobile-tabs .tab").forEach((t,i)=>t.classList.toggle("active",i===n));
   document.querySelectorAll(".tab-body").forEach((b,i)=>b.classList.toggle("active",i===n));
   setTimeout(()=>map.invalidateSize(),50);
-  if(window.innerWidth<=768)document.getElementById("sidebar").classList.add("panel-open");
+  if(window.innerWidth<=768){
+    const sidebar=document.getElementById("sidebar");
+    const btn=document.getElementById("mobileToggle");
+    sidebar.classList.add("panel-open");
+    if(btn){btn.classList.add("active");btn.innerHTML="Mapa &#9650;";}
+  }
 }
 
 // ── MOBILE PANEL ──
-function toggleMobilePanel(){document.getElementById("sidebar").classList.toggle("panel-open");}
+function toggleMobilePanel(){
+  const sidebar=document.getElementById("sidebar");
+  const btn=document.getElementById("mobileToggle");
+  const open=sidebar.classList.toggle("panel-open");
+  if(btn){btn.classList.toggle("active",open);btn.innerHTML=open?"Mapa &#9650;":"Lista &#9660;";}
+  if(open)setTimeout(()=>map.invalidateSize(),50);
+}
 
 // ── COLLAPSIBLE FILTERS ──
 function toggleFilters(){
@@ -486,16 +503,6 @@ function toggleFilters(){
   btn.textContent=collapsed?"▼ Mostrar":"▲ Ocultar";
 }
 
-// ── MOBILE DRAG ──
-function initMobileDrag(){
-  if(window.innerWidth>768)return;
-  const panel=document.getElementById("sidebar");
-  const handle=panel.querySelector(".panel-handle");
-  let startY=0,startTime=0,dragging=false,startIsOpen=false;
-  handle.addEventListener("touchstart",e=>{startY=e.touches[0].clientY;startTime=Date.now();dragging=false;startIsOpen=panel.classList.contains("panel-open");panel.style.transition="none";},{passive:true});
-  handle.addEventListener("touchmove",e=>{const dy=e.touches[0].clientY-startY;if(Math.abs(dy)>8)dragging=true;if(!dragging)return;const pH=panel.offsetHeight,base=startIsOpen?0:(pH-108);const ny=Math.max(0,Math.min(pH-38,base+dy));panel.style.transform=`translateY(${ny}px)`;},{passive:true});
-  handle.addEventListener("touchend",e=>{panel.style.transition="transform .32s cubic-bezier(.4,0,.2,1)";panel.style.transform="";const dy=e.changedTouches[0].clientY-startY;const vel=dy/(Date.now()-startTime);if(!dragging)panel.classList.toggle("panel-open");else if(vel>0.3||(dy>70&&vel>=0))panel.classList.remove("panel-open");else if(vel<-0.3||(dy<-70&&vel<=0))panel.classList.add("panel-open");},{passive:true});
-}
 
 // ── SEARCHABLE SELECT ──
 const _csInstances={};
@@ -530,7 +537,6 @@ new SearchableSelect("routeB","Buscar destino...");
 new SearchableSelect("multiDepSel","Buscar punto de partida...");
 new SearchableSelect("filterProv","Todas las provincias");
 new SearchableSelect("sortSel");
-initMobileDrag();
 </script>
 </body>
 </html>
