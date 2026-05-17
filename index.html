@@ -3,83 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OPESSA - Red de Estaciones</title>
-<meta name="mobile-web-app-capable" content="yes">
+<title>OPESSA — Propuesta UX</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--bg:#010d1c;--s1:#04192b;--s2:#082133;--border:#0f2f46;--border2:#195070;--cyan:#0085ff;--orange:#f5a800;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--purple:#a78bfa;--text:#d8eaf8;--muted:#3c6278;--muted2:#527c97;--panel:460px;}
+:root{--bg:#010d1c;--s1:#04192b;--s2:#082133;--border:#0f2f46;--border2:#195070;--cyan:#0085ff;--orange:#f5a800;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--purple:#a78bfa;--text:#d8eaf8;--muted:#3c6278;--muted2:#527c97;--topbar-h:56px;--sidebar-w:40%;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:"JetBrains Mono",monospace;font-size:13px;}
-#app{display:flex;height:100vh;width:100vw;}
-#panel{width:var(--panel);min-width:var(--panel);height:100%;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;overflow:hidden;}
-#mapWrap{flex:1;position:relative;overflow:hidden;}
-#map{width:100%;height:100%;}
-/* MOBILE HANDLE */
-.panel-handle{display:none;justify-content:center;align-items:center;padding:10px 0 6px;flex-shrink:0;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent;}
-.panel-handle-bar{width:36px;height:4px;background:var(--border2);border-radius:2px;transition:background .2s;}
-.panel-handle:hover .panel-handle-bar{background:var(--cyan);}
-/* PANEL HEADER */
-.p-hdr{padding:13px 18px 10px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,133,255,.08) 0%,transparent 60%);flex-shrink:0;}
-.logo{display:flex;align-items:center;gap:11px;}
-.logo-badge{width:34px;height:34px;background:var(--cyan);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 14px rgba(0,133,255,.45);}
+
+/* ── PROTOTYPE BANNER ── */
+#proto-badge{position:fixed;top:calc(var(--topbar-h) + 8px);left:50%;transform:translateX(-50%);background:rgba(245,168,0,.15);border:1px solid rgba(245,168,0,.4);border-radius:20px;padding:4px 14px;font-size:10px;font-family:"Syne",sans-serif;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--orange);z-index:400;pointer-events:none;}
+
+/* ── TOPBAR ── */
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:stretch;z-index:500;background:linear-gradient(135deg,rgba(0,133,255,.06) 0%,transparent 60%);}
+.ribbon-logo{display:flex;align-items:center;gap:11px;padding:0 20px;border-right:1px solid var(--border);flex-shrink:0;min-width:190px;}
+.logo-badge{width:32px;height:32px;background:var(--cyan);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 14px rgba(0,133,255,.45);}
 .logo-badge span{font-family:"Syne",sans-serif;font-size:9px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1;}
-.logo-name{font-family:"Syne",sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:.3px;}
+.logo-name{font-family:"Syne",sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:.3px;}
 .logo-name em{color:var(--cyan);font-style:normal;}
-.logo-sub{font-size:9px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-top:2px;}
-/* TABS */
-.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
-.tab{flex:1;padding:10px 4px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;text-align:center;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
-.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:rgba(0,133,255,.05);}
-.tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.02);}
-.tab-body{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
-.tab-body.active{display:flex;}
-/* SECTIONS */
-.section{padding:10px 15px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+.ribbon-tabs{display:flex;align-items:stretch;flex:1;}
+.ribbon-tab{display:flex;align-items:center;padding:0 22px;font-family:"Syne",sans-serif;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.ribbon-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:rgba(0,133,255,.05);}
+.ribbon-tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.02);}
+.ribbon-actions{display:flex;align-items:center;gap:6px;padding:0 14px;border-left:1px solid var(--border);flex-shrink:0;}
+.ribbon-map-btn{background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:5px;padding:5px 10px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.ribbon-map-btn:hover,.ribbon-map-btn.active{color:var(--cyan);border-color:var(--cyan);background:rgba(0,133,255,.07);}
+
+/* ── LAYOUT ── */
+#app{display:flex;padding-top:var(--topbar-h);height:100vh;}
+#sidebar{width:var(--sidebar-w);min-width:300px;height:calc(100vh - var(--topbar-h));background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;flex-shrink:0;}
+#sidebar::-webkit-scrollbar{width:4px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+#mapWrap{flex:1;height:calc(100vh - var(--topbar-h));position:relative;overflow:hidden;}
+#map{width:100%;height:100%;}
+
+/* ── MOBILE HANDLE ── */
+.panel-handle{display:none;justify-content:center;align-items:center;padding:12px 0 6px;cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.panel-handle-bar{width:44px;height:5px;background:var(--border2);border-radius:3px;transition:background .2s;}
+.panel-handle:hover .panel-handle-bar{background:var(--cyan);}
+
+/* ── MOBILE TABS (inside sheet) ── */
+.mobile-tabs{display:none;border-bottom:1px solid var(--border);flex-shrink:0;}
+.mobile-tabs .tab{flex:1;padding:12px 4px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;text-align:center;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
+.mobile-tabs .tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:rgba(0,133,255,.05);}
+
+/* ── TAB BODIES ── */
+.tab-body{display:none;}
+.tab-body.active{display:block;}
+
+/* ── SECTIONS ── */
+.section{padding:10px 15px;border-bottom:1px solid var(--border);}
 .sec-title{font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:var(--muted);margin-bottom:7px;font-family:"Syne",sans-serif;font-weight:700;}
 select.fs,input.fs{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text);outline:none;cursor:pointer;transition:border-color .2s,box-shadow .2s;}
 select.fs:focus,input.fs:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,133,255,.12);}
 .info-box{margin-top:7px;border-radius:6px;padding:7px 10px;font-size:11px;line-height:1.5;display:none;}
 .info-box.cyan{background:rgba(0,133,255,.07);border:1px solid rgba(0,133,255,.2);border-left:2px solid var(--cyan);color:rgba(80,170,255,.95);}
 .info-box.orange{background:rgba(245,168,0,.07);border:1px solid rgba(245,168,0,.2);border-left:2px solid var(--orange);color:rgba(245,180,50,.95);}
-/* BUTTONS */
+
+/* ── BUTTONS ── */
 .btn{font-family:"Syne",sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px 12px;border:none;border-radius:6px;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}
-.btn-cyan{background:var(--cyan);color:#fff;box-shadow:0 2px 10px rgba(0,133,255,.35);}.btn-cyan:hover:not(:disabled){background:#1a9aff;box-shadow:0 4px 18px rgba(0,133,255,.5);}.btn-cyan:disabled{opacity:.35;cursor:not-allowed;box-shadow:none;}
-.btn-red{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,.35);}.btn-red:hover:not(:disabled){background:rgba(239,68,68,.07);border-color:var(--red);}.btn-red:disabled{opacity:.3;cursor:not-allowed;}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);}.btn-ghost:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan);background:rgba(0,133,255,.05);}.btn-ghost:disabled{opacity:.3;cursor:not-allowed;}
-.btn-green{background:var(--green);color:#000;}.btn-green:hover:not(:disabled){background:#34d399;}.btn-green:disabled{opacity:.35;cursor:not-allowed;}
-.btn-orange{background:var(--orange);color:#000;}.btn-orange:hover:not(:disabled){filter:brightness(1.1);}.btn-orange:disabled{opacity:.35;cursor:not-allowed;}
-.btn-sm{padding:5px 9px;font-size:10px;}.btn-full{width:100%;}
-/* PROGRESS */
-.prog{display:none;padding:7px 15px;border-bottom:1px solid var(--border);flex-shrink:0;}.prog.on{display:block;}
-.prog-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:5px;}.prog-cnt{color:var(--cyan);font-weight:600;}
+.btn-cyan{background:var(--cyan);color:#fff;box-shadow:0 2px 10px rgba(0,133,255,.35);}
+.btn-cyan:hover:not(:disabled){background:#1a9aff;}
+.btn-cyan:disabled{opacity:.35;cursor:not-allowed;}
+.btn-red{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,.35);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);}
+.btn-ghost:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan);background:rgba(0,133,255,.05);}
+.btn-ghost:disabled{opacity:.3;cursor:not-allowed;}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:disabled{opacity:.35;cursor:not-allowed;}
+.btn-orange{background:var(--orange);color:#000;}
+.btn-orange:disabled{opacity:.35;cursor:not-allowed;}
+.btn-sm{padding:5px 9px;font-size:10px;}
+.btn-full{width:100%;}
+
+/* ── PROGRESS ── */
+.prog{display:none;padding:7px 15px;border-bottom:1px solid var(--border);}
+.prog.on{display:block;}
+.prog-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:5px;}
+.prog-cnt{color:var(--cyan);font-weight:600;}
 .prog-track{background:var(--border);height:3px;border-radius:2px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));width:0;transition:width .35s;border-radius:2px;}
-.prog-msg{font-size:10px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:7px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));width:30%;border-radius:2px;}
+.prog-msg{font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:7px 12px;border-bottom:1px solid var(--border);}
 .stat{background:var(--s2);border-radius:6px;padding:6px 7px;border:1px solid var(--border);}
 .stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:2px;}
 .stat-v{font-family:"Syne",sans-serif;font-size:14px;font-weight:700;}
-/* FILTER BAR */
-.filter-bar{padding:7px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:6px;}
+
+/* ── FILTER BAR (collapsible) ── */
+.filter-bar{border-bottom:1px solid var(--border);}
+.filter-bar-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;transition:background .15s;user-select:none;}
+.filter-bar-header:hover{background:rgba(255,255,255,.02);}
+.filter-bar-header .sec-title{margin:0;}
+.filter-toggle{background:none;border:1px solid var(--border2);color:var(--muted);font-size:9px;font-family:"Syne",sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;padding:3px 8px;border-radius:4px;transition:all .2s;}
+.filter-toggle:hover{color:var(--cyan);border-color:var(--cyan);}
+.filter-bar-body{padding:0 12px 8px;display:flex;flex-direction:column;gap:6px;max-height:400px;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .3s,opacity .25s;opacity:1;}
+.filter-bar-body.collapsed{max-height:0;padding-bottom:0;opacity:0;}
+
+/* ── SEARCH / SELECTS ── */
 .filter-row-inline{display:flex;gap:6px;align-items:center;}
 .search{flex:1;min-width:60px;background:var(--s2);border:1px solid var(--border2);border-radius:5px;padding:5px 9px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
-.search:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,133,255,.12);}.search::placeholder{color:var(--muted);}
+.search:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,133,255,.12);}
+.search::placeholder{color:var(--muted);}
 select.mini{background:var(--s2);border:1px solid var(--border2);border-radius:4px;padding:5px 6px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--text);outline:none;cursor:pointer;}
-select.mini:focus{border-color:var(--cyan);}
-/* TYPE FILTER */
+
+/* ── TYPE CHIPS ── */
 .type-filter-row{display:flex;gap:4px;flex-wrap:wrap;}
 .ttype-chip{padding:3px 7px;border-radius:4px;border:1px solid var(--border2);background:var(--s2);font-size:9px;font-family:"Syne",sans-serif;font-weight:700;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;letter-spacing:.4px;text-transform:uppercase;}
 .ttype-chip.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,133,255,.09);}
-/* TYPE BADGES */
-.stype-badge{display:inline-block;font-size:8px;padding:1px 5px;border-radius:3px;font-family:"Syne",sans-serif;font-weight:700;letter-spacing:.5px;margin-top:2px;}
-.stype-highway{background:rgba(245,168,0,.1);color:var(--orange);border:1px solid rgba(245,168,0,.25);}
-.stype-full{background:rgba(0,133,255,.12);color:var(--cyan);border:1px solid rgba(0,133,255,.28);}
-.stype-aca{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.25);}
-.stype-mobile{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25);}
-/* DUAL RANGE SLIDER */
+
+/* ── RANGE SLIDER ── */
 .range-wrap{display:flex;flex-direction:column;gap:3px;}
 .range-labels{display:flex;justify-content:space-between;font-size:10px;}
 .range-labels .rl-key{color:var(--muted);}
@@ -87,74 +123,70 @@ select.mini:focus{border-color:var(--cyan);}
 .dual-range{position:relative;height:22px;}
 .dual-range input[type=range]{position:absolute;width:100%;height:4px;background:transparent;pointer-events:none;-webkit-appearance:none;appearance:none;outline:none;top:9px;}
 .dual-range input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);cursor:pointer;pointer-events:all;margin-top:-5.5px;box-shadow:0 0 6px rgba(0,133,255,.5);}
-.dual-range input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--cyan);border:2px solid var(--bg);cursor:pointer;pointer-events:all;}
 .range-track{position:absolute;top:9px;left:0;right:0;height:4px;background:var(--border2);border-radius:2px;}
-.range-fill{position:absolute;top:9px;height:4px;background:linear-gradient(90deg,var(--cyan),rgba(0,133,255,.4));border-radius:2px;opacity:.75;}
-/* LIST */
-.slist{flex:1;overflow-y:auto;padding:4px 5px;min-height:0;}.slist::-webkit-scrollbar{width:3px;}.slist::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.sitem{display:grid;grid-template-columns:10px 1fr 82px;gap:7px;align-items:start;padding:7px 9px;border-radius:6px;cursor:pointer;transition:background .12s;border:1px solid transparent;margin-bottom:2px;}
-.sitem:hover{background:var(--s2);border-color:var(--border);}.sitem.active{background:rgba(0,133,255,.07);border-color:rgba(0,133,255,.22);}.sitem.is-ref{background:rgba(0,133,255,.05);border-color:rgba(0,133,255,.15);}
+.range-fill{position:absolute;top:9px;height:4px;background:linear-gradient(90deg,var(--cyan),rgba(0,133,255,.4));border-radius:2px;opacity:.75;left:0;right:0;}
+
+/* ── STATION LIST (natural height — sidebar scrolls) ── */
+.slist{padding:4px 5px;}
+.sitem{display:grid;grid-template-columns:10px 1fr 72px;gap:7px;align-items:start;padding:7px 9px;border-radius:6px;cursor:pointer;transition:background .12s;border:1px solid transparent;margin-bottom:2px;}
+.sitem:hover{background:var(--s2);border-color:var(--border);}
+.sitem.active{background:rgba(0,133,255,.07);border-color:rgba(0,133,255,.22);}
 .sitem-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;}
 .sitem-main{min-width:0;}
-.sitem-apies{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;line-height:1.2;}.sitem-apies.rc{color:var(--cyan);}
+.sitem-apies{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;line-height:1.2;}
 .sitem-op{font-size:10px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
 .sitem-loc{font-size:9px;color:var(--muted);margin-top:1px;}
 .sitem-right{text-align:right;}
 .sitem-dist{font-family:"Syne",sans-serif;font-size:13px;font-weight:700;line-height:1.2;}
-.sitem-time{font-size:10px;color:var(--purple);margin-top:2px;}
-.export-row{display:flex;gap:6px;padding:7px 12px;border-top:1px solid var(--border);flex-shrink:0;}
-/* TAB 1 */
-.route-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-.route-picks{padding:11px 15px;border-bottom:1px solid var(--border);flex-shrink:0;}
+
+/* ── EXPORT ROW ── */
+.export-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);}
+
+/* ── TAB 1 ── */
+.route-picks{padding:11px 15px;border-bottom:1px solid var(--border);}
 .connector-arrow{text-align:center;color:var(--muted);font-size:16px;padding:2px 0;}
-.route-result{flex:1;overflow-y:auto;padding:11px 15px;min-height:0;}
+.route-result{padding:11px 15px;}
+.empty-msg{text-align:center;color:var(--muted);font-size:11px;padding:22px 15px;line-height:1.7;}
 .route-card{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:13px;}
 .rcard-head{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:9px;}
-.rstat{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(15,47,70,.8);}.rstat:last-child{border:none;}
-.rstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}.rstat-v{font-family:"Syne",sans-serif;font-size:14px;font-weight:700;}
-.empty-msg{text-align:center;color:var(--muted);font-size:11px;padding:22px 15px;line-height:1.7;}
-/* TAB 2 — MULTI */
-.multi-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-.multi-config{padding:9px 13px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.dep-row{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
+
+/* ── TAB 2 ── */
+.multi-config{padding:9px 13px;border-bottom:1px solid var(--border);}
 .dep-label{font-size:10px;color:var(--muted);white-space:nowrap;font-family:"Syne",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
 .filter-chip-row{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;}
 .filter-chip{padding:4px 8px;border-radius:4px;border:1px solid var(--border2);background:var(--s2);font-size:10px;font-family:"Syne",sans-serif;font-weight:700;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
 .filter-chip.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,133,255,.08);}
-.multi-list{flex:1;overflow-y:auto;padding:4px 5px;min-height:0;}.multi-list::-webkit-scrollbar{width:3px;}.multi-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.multi-list{padding:4px 5px;}
 .mitem{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:5px;border:1px solid var(--border);margin-bottom:3px;cursor:pointer;transition:all .15s;}
-.mitem:hover{border-color:var(--border2);background:var(--s2);}.mitem.selected{border-color:var(--orange);background:rgba(245,168,0,.07);}
-.mitem-num{width:18px;height:18px;border-radius:50%;background:var(--orange);color:#000;font-family:"Syne",sans-serif;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;}.mitem.selected .mitem-num{opacity:1;}
+.mitem:hover{border-color:var(--border2);background:var(--s2);}
 .mitem-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.mitem-body{flex:1;min-width:0;}.mitem-apies{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;}.mitem-op{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.mitem-dists{font-size:10px;text-align:right;min-width:72px;line-height:1.4;}
-.multi-footer{padding:8px 13px;border-top:1px solid var(--border);flex-shrink:0;}
-.rsumm{background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;margin-bottom:7px;display:none;border-left:2px solid var(--orange);}.rsumm.on{display:block;}
-.rsumm-stat{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;}.rsumm-lbl{color:var(--muted);}.rsumm-val{font-family:"Syne",sans-serif;font-weight:700;}
-/* route progress overlay on map */
-.route-prog-overlay{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:600;background:rgba(4,25,43,.92);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:7px;padding:10px 18px;font-size:11px;color:var(--cyan);display:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5);}
-.route-prog-overlay.on{display:block;}
-/* MAP */
-.map-actions{position:absolute;top:14px;right:14px;z-index:500;display:flex;flex-direction:column;gap:6px;}
-.map-btn{background:rgba(4,25,43,.9);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:6px;padding:7px 12px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text);cursor:pointer;transition:all .18s;box-shadow:0 2px 8px rgba(0,0,0,.4);}
-.map-btn:hover{border-color:var(--cyan);color:var(--cyan);}.map-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,133,255,.1);}
+.mitem-body{flex:1;min-width:0;}
+.mitem-apies{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;}
+.mitem-op{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rsumm{background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;margin:8px 13px;border-left:2px solid var(--orange);}
+.rsumm-stat{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;}
+.rsumm-lbl{color:var(--muted);}
+.rsumm-val{font-family:"Syne",sans-serif;font-weight:700;}
+.multi-footer{padding:8px 13px;border-top:1px solid var(--border);}
+
+/* ── MAP LEGEND ── */
 .map-legend{position:absolute;bottom:28px;right:14px;z-index:500;background:rgba(4,25,43,.9);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;box-shadow:0 4px 16px rgba(0,0,0,.4);}
 .leg-title{font-family:"Syne",sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;}
-.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:10px;}.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-/* POPUP */
+.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:10px;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+/* ── POPUP ── */
 .leaflet-popup-content-wrapper{background:var(--s2)!important;border:1px solid var(--border2)!important;color:var(--text)!important;border-radius:9px!important;box-shadow:0 10px 40px rgba(0,0,0,.7)!important;}
 .leaflet-popup-tip{background:var(--s2)!important;}
-.leaflet-popup-content{margin:12px 14px!important;font-family:"JetBrains Mono",monospace!important;font-size:11px!important;min-width:200px;}
+.leaflet-popup-content{margin:12px 14px!important;font-family:"JetBrains Mono",monospace!important;font-size:11px!important;min-width:180px;}
 .pop-title{font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:2px;}
 .pop-op{font-size:10px;color:var(--muted);margin-bottom:8px;}
-.pop-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px solid rgba(15,47,70,.5);}.pop-row:last-of-type{border:none;}
-.pop-l{color:var(--muted);font-size:10px;}.pop-v{font-size:11px;text-align:right;}
-.pop-actions{display:flex;gap:6px;margin-top:9px;}
-.pop-btn{flex:1;background:var(--cyan);color:#fff;border:none;border-radius:4px;padding:6px 8px;font-family:"Syne",sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;cursor:pointer;}
-.pop-btn:hover{background:#1a9aff;}.pop-btn.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(0,133,255,.3);}.pop-btn.ghost:hover{background:rgba(0,133,255,.1);}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--s2);border:1px solid var(--border2);border-radius:7px;padding:9px 18px;font-size:11px;z-index:9999;pointer-events:none;opacity:0;transition:all .25s;max-width:380px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.6);}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* SEARCHABLE SELECT */
+.pop-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px solid rgba(15,47,70,.5);}
+.pop-row:last-of-type{border:none;}
+.pop-l{color:var(--muted);font-size:10px;}
+.pop-v{font-size:11px;text-align:right;}
+
+/* ── SEARCHABLE SELECT ── */
 .cs-wrap{position:relative;width:100%;}
 .cs-box{display:flex;align-items:center;background:var(--s2);border:1px solid var(--border2);border-radius:6px;cursor:pointer;transition:border-color .2s,box-shadow .2s;}
 .cs-wrap.cs-open .cs-box{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,133,255,.12);}
@@ -169,1120 +201,336 @@ select.mini:focus{border-color:var(--cyan);}
 .cs-item:hover,.cs-item:active{background:rgba(0,133,255,.1);color:var(--cyan);}
 .cs-item.cs-selected{color:var(--cyan);background:rgba(0,133,255,.07);}
 .cs-empty{padding:14px;font-size:11px;color:var(--muted);text-align:center;}
-.cs-list::-webkit-scrollbar{width:3px;}.cs-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.cs-list::-webkit-scrollbar{width:3px;}
+.cs-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .cs-wrap.cs-disabled .cs-box{opacity:.4;pointer-events:none;}
 .cs-wrap.cs-mini{display:inline-block;}
 .cs-wrap.cs-mini .cs-input{font-size:10px;padding:5px 8px;}
 .cs-wrap.cs-mini .cs-item{font-size:10px;padding:6px 9px;}
-/* MOBILE */
-#mobileOpenBtn{display:none;}
+
+/* ── MOBILE ── */
 @media(max-width:768px){
-  #app{flex-direction:column;overflow:hidden;}
-  #mapWrap{width:100vw;height:100vh;position:relative;}
-  #panel{position:fixed;bottom:0;left:0;right:0;width:100%;min-width:unset;height:86vh;border-right:none;border-top:1px solid var(--border);border-radius:20px 20px 0 0;transform:translateY(calc(100% - 132px));transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:1000;box-shadow:0 -8px 40px rgba(0,0,0,.8);will-change:transform;}
-  #panel.panel-open{transform:translateY(0);}
-  .panel-handle{display:flex;padding:14px 0 8px;}
-  .panel-handle-bar{width:44px;height:5px;}
-  .p-hdr{padding:6px 16px 8px;}
-  .logo-sub{display:none;}
-  .tabs{flex-shrink:0;}
-  .tab{padding:13px 4px;font-size:11px;min-height:44px;display:flex;align-items:center;justify-content:center;}
-  .map-actions{top:16px;bottom:auto;right:12px;}
-  .map-legend{display:none;}
+  :root{--topbar-h:48px;}
+  .ribbon-tabs,.ribbon-actions,.logo-sub{display:none;}
+  .ribbon-logo{min-width:unset;border-right:none;}
+  #app{padding-top:0;height:100vh;display:block;}
+  #mapWrap{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;height:auto;z-index:0;}
+  #sidebar{position:fixed;bottom:0;left:0;right:0;width:100%;min-width:unset;height:86vh;border-right:none;border-top:1px solid var(--border);border-radius:20px 20px 0 0;transform:translateY(calc(100% - 108px));transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:1000;box-shadow:0 -8px 40px rgba(0,0,0,.8);will-change:transform;display:flex;flex-direction:column;}
+  #sidebar.panel-open{transform:translateY(0);}
+  .panel-handle{display:flex;}
+  .mobile-tabs{display:flex;}
   .stats{grid-template-columns:repeat(2,1fr);}
-  .route-prog-overlay{bottom:16px;left:12px;right:12px;transform:none;white-space:normal;text-align:center;}
-  .toast{bottom:calc(86vh - 132px + 12px);}
+  .map-legend{display:none;}
+  #proto-badge{display:none;}
   .btn{min-height:44px;padding:10px 14px;font-size:12px;}
   .btn-sm{min-height:38px;padding:7px 11px;font-size:11px;}
   .section{padding:12px 16px;}
-  .filter-bar{padding:8px 14px;}
-  select.mini,.cs-wrap.cs-mini .cs-input{font-size:11px;padding:7px 8px;}
+  .filter-bar-body{padding:0 14px 10px;}
 }
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
+
+<div id="proto-badge">✦ Propuesta UX — No funcional</div>
+
+<!-- ══ TOPBAR ══ -->
+<header id="topbar">
+  <div class="ribbon-logo">
+    <div class="logo-badge"><span>YPF</span></div>
+    <div>
+      <div class="logo-name">OPES<em>SA</em></div>
+      <div class="logo-sub">Red de Estaciones</div>
+    </div>
+  </div>
+  <nav class="ribbon-tabs">
+    <div class="ribbon-tab active" onclick="switchTab(0)">Distancias</div>
+    <div class="ribbon-tab" onclick="switchTab(1)">Ruta A→B</div>
+    <div class="ribbon-tab" onclick="switchTab(2)">Multi-parada</div>
+  </nav>
+  <div class="ribbon-actions">
+    <button class="ribbon-map-btn" onclick="fitAll()">Encuadrar</button>
+    <button class="ribbon-map-btn" id="btnRadios">Radios</button>
+  </div>
+</header>
+
+<!-- ══ APP ══ -->
 <div id="app">
-<div id="panel">
-  <div class="panel-handle" onclick="toggleMobilePanel()"><div class="panel-handle-bar"></div></div>
-  <div class="p-hdr">
-    <div class="logo">
-      <div class="logo-badge"><span>YPF</span></div>
-      <div>
-        <div class="logo-name">OPES<em>SA</em></div>
-        <div class="logo-sub">Red de Estaciones · Herramienta de Distancias</div>
-      </div>
-    </div>
-  </div>
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab(0)">Distancias</div>
-    <div class="tab" onclick="switchTab(1)">Ruta A-B</div>
-    <div class="tab" onclick="switchTab(2)">Multi-parada</div>
-  </div>
 
-  <!-- ═══ TAB 0: DISTANCIAS ═══ -->
-  <div class="tab-body active" id="tab0">
-    <div class="section">
-      <div class="sec-title">Punto de referencia</div>
-      <select class="fs" id="refSel" onchange="onRefChange()"></select>
-      <div class="info-box cyan" id="refInfo"></div>
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="panel-handle" onclick="toggleMobilePanel()"><div class="panel-handle-bar"></div></div>
+    <div class="mobile-tabs">
+      <div class="tab active" onclick="switchTab(0)">Distancias</div>
+      <div class="tab" onclick="switchTab(1)">Ruta A→B</div>
+      <div class="tab" onclick="switchTab(2)">Multi</div>
     </div>
-    <div class="section" style="display:flex;gap:6px;">
-      <button class="btn btn-cyan" id="btnCalc" onclick="startCalc()" disabled style="flex:1">Calcular distancias</button>
-      <button class="btn btn-red" id="btnStop" onclick="stopCalc()" disabled>Stop</button>
-      <button class="btn btn-ghost" id="btnReset" onclick="resetCalc()" disabled>Reset</button>
-    </div>
-    <div class="prog" id="prog">
-      <div class="prog-top"><span style="color:var(--muted);font-size:10px">Calculando rutas...</span><span class="prog-cnt" id="progCnt">0/0</span></div>
-      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-      <div class="prog-msg" id="progMsg"></div>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-l">Total</div><div class="stat-v" style="color:var(--cyan)" id="sTot">138</div></div>
-      <div class="stat"><div class="stat-l">Calc.</div><div class="stat-v" style="color:var(--green)" id="sDone">0</div></div>
-      <div class="stat"><div class="stat-l">Max.</div><div class="stat-v" style="color:var(--orange)" id="sMax">-</div></div>
-      <div class="stat"><div class="stat-l">Prom.</div><div class="stat-v" style="color:var(--purple)" id="sAvg">-</div></div>
-    </div>
-    <div class="filter-bar">
-      <div class="filter-row-inline">
-        <input class="search" id="searchBox" type="text" placeholder="Buscar APIES, operador..." oninput="renderList()">
-        <select class="mini" id="sortSel" onchange="renderList()">
-          <option value="apies">APIES</option>
-          <option value="dist">Dist asc</option>
-          <option value="dist_d">Dist desc</option>
-          <option value="loc">Ciudad</option>
-        </select>
+
+    <!-- ═══ TAB 0: DISTANCIAS ═══ -->
+    <div class="tab-body active" id="tab0">
+      <div class="section">
+        <div class="sec-title">Punto de referencia</div>
+        <select class="fs" id="refSel"></select>
+        <div class="info-box cyan" id="refInfo" style="display:block">APIES 973 · ACA Rosario Oroño · Rosario, Santa Fe</div>
       </div>
-      <div class="filter-row-inline">
-        <select class="mini" id="filterProv" onchange="renderList()" style="flex:1">
-          <option value="all">Todas las provincias</option>
-        </select>
+      <div class="section" style="display:flex;gap:6px;">
+        <button class="btn btn-cyan" style="flex:1">Calcular distancias</button>
+        <button class="btn btn-red" disabled>Stop</button>
+        <button class="btn btn-ghost" disabled>Reset</button>
       </div>
-      <div class="type-filter-row" id="typeFilterRow">
-        <div class="ttype-chip on" onclick="setTypeFilter(this,'all')">Todas</div>
-        <div class="ttype-chip" onclick="setTypeFilter(this,'full')">Full</div>
-        <div class="ttype-chip" onclick="setTypeFilter(this,'aca')">ACA</div>
-        <div class="ttype-chip" onclick="setTypeFilter(this,'mobile')">Móvil</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-l">Total</div><div class="stat-v" style="color:var(--cyan)" id="sTot">138</div></div>
+        <div class="stat"><div class="stat-l">Calc.</div><div class="stat-v" style="color:var(--green)">0</div></div>
+        <div class="stat"><div class="stat-l">Max.</div><div class="stat-v" style="color:var(--orange)">—</div></div>
+        <div class="stat"><div class="stat-l">Prom.</div><div class="stat-v" style="color:var(--purple)">—</div></div>
       </div>
-      <div class="range-wrap">
-        <div class="range-labels">
-          <span class="rl-key">Rango: <span class="rl-val" id="rangeMinLbl">0</span> km</span>
-          <span class="rl-key"><span class="rl-val" id="rangeMaxLbl">Max</span> km</span>
+
+      <!-- COLLAPSIBLE FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-bar-header" onclick="toggleFilters()">
+          <span class="sec-title" style="margin:0">Filtros</span>
+          <button class="filter-toggle" id="filterToggle">▲ Ocultar</button>
         </div>
-        <div class="dual-range">
-          <div class="range-track"></div>
-          <div class="range-fill" id="rangeFill"></div>
-          <input type="range" id="rangeMin" min="0" max="3000" value="0" step="10" oninput="onRangeChange('tab0')">
-          <input type="range" id="rangeMax" min="0" max="3000" value="3000" step="10" oninput="onRangeChange('tab0')">
+        <div class="filter-bar-body" id="filterBody">
+          <div class="filter-row-inline">
+            <input class="search" type="text" placeholder="Buscar APIES, operador...">
+            <select class="mini" id="sortSel">
+              <option value="apies">APIES</option>
+              <option value="dist">Dist asc</option>
+              <option value="dist_d">Dist desc</option>
+              <option value="loc">Ciudad</option>
+            </select>
+          </div>
+          <select class="mini" id="filterProv" style="width:100%"></select>
+          <div class="type-filter-row">
+            <div class="ttype-chip on">Todas</div>
+            <div class="ttype-chip">Full</div>
+            <div class="ttype-chip">ACA</div>
+            <div class="ttype-chip">Móvil</div>
+          </div>
+          <div class="range-wrap">
+            <div class="range-labels">
+              <span class="rl-key">Rango: <span class="rl-val">0</span> km</span>
+              <span class="rl-key"><span class="rl-val">Max</span> km</span>
+            </div>
+            <div class="dual-range">
+              <div class="range-track"></div>
+              <div class="range-fill"></div>
+              <input type="range" min="0" max="3000" value="0" step="10">
+              <input type="range" min="0" max="3000" value="3000" step="10">
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="slist" id="stationList"></div>
-    <div class="export-row">
-      <button class="btn btn-green" id="btnXlsx" onclick="exportXLSX()" disabled style="flex:1">Excel</button>
-      <button class="btn btn-ghost" id="btnCsv" onclick="exportCSV()" disabled style="flex:1">CSV</button>
-    </div>
-  </div>
 
-  <!-- ═══ TAB 1: RUTA A-B ═══ -->
-  <div class="tab-body" id="tab1">
-    <div class="route-body">
+      <div class="slist" id="stationList"></div>
+      <div class="export-row">
+        <button class="btn btn-green" disabled style="flex:1">Excel</button>
+        <button class="btn btn-ghost" disabled style="flex:1">CSV</button>
+      </div>
+    </div>
+
+    <!-- ═══ TAB 1: RUTA A-B ═══ -->
+    <div class="tab-body" id="tab1">
       <div class="route-picks">
         <div class="sec-title">Origen</div>
-        <select class="fs" id="routeA" onchange="onRouteChange()" style="margin-bottom:9px"></select>
+        <select class="fs" id="routeA" style="margin-bottom:9px"></select>
         <div class="connector-arrow">&#8659;</div>
         <div class="sec-title" style="margin-top:9px;margin-bottom:5px;">Destino</div>
-        <select class="fs" id="routeB" onchange="onRouteChange()" style="margin-bottom:9px"></select>
-        <button class="btn btn-cyan btn-full" id="btnRouteAB" onclick="calcRouteAB()" disabled>Calcular ruta</button>
+        <select class="fs" id="routeB" style="margin-bottom:9px"></select>
+        <button class="btn btn-cyan btn-full" disabled>Calcular ruta</button>
       </div>
-      <div class="route-result" id="routeResult">
-        <div class="empty-msg">Selecciona origen y destino.<br><br><span style="font-size:10px;color:var(--muted)">Si OSRM esta disponible, dibuja el trazado real en el mapa.</span></div>
+      <div class="route-result">
+        <div class="empty-msg">Seleccioná origen y destino.<br><br><span style="font-size:10px;color:var(--muted)">Dibuja el trazado real en el mapa vía OSRM.</span></div>
       </div>
     </div>
-  </div>
 
-  <!-- ═══ TAB 2: MULTI-PARADA ═══ -->
-  <div class="tab-body" id="tab2">
-    <div class="multi-body">
-
-      <!-- DEPARTURE POINT -->
+    <!-- ═══ TAB 2: MULTI-PARADA ═══ -->
+    <div class="tab-body" id="tab2">
       <div class="multi-config">
-        <div class="sec-title" style="margin-bottom:5px;">Punto de partida del recorrido</div>
-        <select class="fs" id="multiDepSel" onchange="onMultiDepChange()" style="margin-bottom:6px;"></select>
-        <div class="info-box orange" id="multiDepInfo"></div>
-
-        <div class="sec-title" style="margin-top:10px;margin-bottom:5px;">Filtrar estaciones disponibles</div>
+        <div class="sec-title" style="margin-bottom:5px;">Punto de partida</div>
+        <select class="fs" id="multiDepSel" style="margin-bottom:6px;"></select>
+        <div class="info-box orange" style="display:block;margin-bottom:8px;">Seleccioná un punto de partida para filtrar estaciones.</div>
+        <div class="sec-title" style="margin-top:10px;margin-bottom:5px;">Filtrar por distancia</div>
         <div class="filter-chip-row">
-          <div class="filter-chip on" onclick="setMultiFilter(this,'all')">Todas</div>
-          <div class="filter-chip" onclick="setMultiFilter(this,'100')">&lt;100km</div>
-          <div class="filter-chip" onclick="setMultiFilter(this,'200')">&lt;200km</div>
-          <div class="filter-chip" onclick="setMultiFilter(this,'300')">&lt;300km</div>
-          <div class="filter-chip" onclick="setMultiFilter(this,'500')">&lt;500km</div>
+          <div class="filter-chip on">Todas</div>
+          <div class="filter-chip">&lt;100km</div>
+          <div class="filter-chip">&lt;200km</div>
+          <div class="filter-chip">&lt;300km</div>
+          <div class="filter-chip">&lt;500km</div>
         </div>
-        <!-- RANGE SLIDER for multi -->
-        <div class="range-wrap" style="margin-bottom:7px;">
+        <div class="range-wrap" style="margin-bottom:8px;">
           <div class="range-labels">
-            <span class="rl-key">Rango: <span class="rl-val" id="mRangeMinLbl">0</span> km</span>
-            <span class="rl-key"><span class="rl-val" id="mRangeMaxLbl">Max</span> km</span>
+            <span class="rl-key">Rango: <span class="rl-val">0</span> km</span>
+            <span class="rl-key"><span class="rl-val">Max</span> km</span>
           </div>
           <div class="dual-range">
             <div class="range-track"></div>
-            <div class="range-fill" id="mRangeFill"></div>
-            <input type="range" id="mRangeMin" min="0" max="3000" value="0" step="10" oninput="onRangeChange('tab2')">
-            <input type="range" id="mRangeMax" min="0" max="3000" value="3000" step="10" oninput="onRangeChange('tab2')">
+            <div class="range-fill"></div>
+            <input type="range" min="0" max="3000" value="0" step="10">
+            <input type="range" min="0" max="3000" value="3000" step="10">
           </div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:7px;">
-          Clic para agregar al recorrido. El numero indica el orden de visita.
-        </div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Clic para agregar al recorrido. El número indica el orden de visita.</div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" onclick="clearMultiSelection()">Limpiar</button>
-          <button class="btn btn-ghost btn-sm" onclick="selectAllVisible()">Sel. visibles</button>
-          <button class="btn btn-orange btn-sm" id="btnOptimize" onclick="optimizeOrder()" disabled>Optimizar orden</button>
+          <button class="btn btn-ghost btn-sm">Limpiar</button>
+          <button class="btn btn-ghost btn-sm">Sel. visibles</button>
+          <button class="btn btn-orange btn-sm" disabled>Optimizar orden</button>
         </div>
       </div>
-
-      <div style="padding:5px 12px 4px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:10px;color:var(--muted)" id="multiCount">0 seleccionadas</span>
-        <input class="search" style="width:140px;padding:4px 8px;" type="text" placeholder="Buscar..." oninput="renderMultiList()" id="multiSearch">
+      <div style="padding:5px 12px 4px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:10px;color:var(--muted)">0 seleccionadas</span>
+        <input class="search" style="width:140px;padding:4px 8px;" type="text" placeholder="Buscar...">
       </div>
-
       <div class="multi-list" id="multiList"></div>
-
-      <div class="rsumm" id="routeSummary">
+      <div class="rsumm">
         <div style="font-family:Syne,sans-serif;font-weight:700;font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Resumen del recorrido</div>
-        <div class="rsumm-stat"><span class="rsumm-lbl">Partida</span><span class="rsumm-val" id="rDep" style="color:var(--orange);font-size:11px">-</span></div>
-        <div class="rsumm-stat"><span class="rsumm-lbl">Paradas</span><span class="rsumm-val" id="rStops">0</span></div>
-        <div class="rsumm-stat"><span class="rsumm-lbl">Distancia total</span><span class="rsumm-val" id="rTotalDist" style="color:var(--orange)">-</span></div>
-        <div class="rsumm-stat"><span class="rsumm-lbl">Tiempo total</span><span class="rsumm-val" id="rTotalTime" style="color:var(--purple)">-</span></div>
-        <div style="font-size:9px;color:var(--muted);margin-top:4px;" id="rMethodNote"></div>
+        <div class="rsumm-stat"><span class="rsumm-lbl">Paradas</span><span class="rsumm-val">0</span></div>
+        <div class="rsumm-stat"><span class="rsumm-lbl">Distancia total</span><span class="rsumm-val" style="color:var(--orange)">—</span></div>
+        <div class="rsumm-stat"><span class="rsumm-lbl">Tiempo total</span><span class="rsumm-val" style="color:var(--purple)">—</span></div>
       </div>
-
       <div class="multi-footer">
-        <button class="btn btn-cyan btn-full" id="btnShowRoute" onclick="showMultiRoute()" disabled style="margin-bottom:5px;">Ver ruta por carretera en mapa</button>
-        <button class="btn btn-ghost btn-full btn-sm" id="btnGmapsMulti" onclick="openMultiGmaps()" disabled style="margin-bottom:5px;">Abrir en Google Maps</button>
-        <button class="btn btn-green btn-full btn-sm" id="btnExportPDF" onclick="exportItinerarioPDF()" disabled>&#128196; Exportar itinerario PDF</button>
+        <button class="btn btn-cyan btn-full" disabled style="margin-bottom:5px;">Ver ruta en mapa</button>
+        <button class="btn btn-ghost btn-full btn-sm" disabled style="margin-bottom:5px;">Abrir en Google Maps</button>
+        <button class="btn btn-green btn-full btn-sm" disabled>&#128196; Exportar PDF</button>
       </div>
+    </div>
+  </aside>
+
+  <!-- MAP -->
+  <div id="mapWrap">
+    <div id="map"></div>
+    <div class="map-legend">
+      <div class="leg-title">Distancia desde base</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--cyan)"></div>Punto base</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--green)"></div>&lt; 100 km</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--yellow)"></div>100 – 300 km</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--orange)"></div>300 – 500 km</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--red)"></div>&gt; 500 km</div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--muted)"></div>Sin calcular</div>
     </div>
   </div>
 </div>
 
-<!-- ═══ MAPA ═══ -->
-<div id="mapWrap">
-  <div id="map"></div>
-  <div class="route-prog-overlay" id="routeProgOverlay">Calculando tramos de ruta...</div>
-  <div class="map-actions">
-    <button class="map-btn" onclick="fitAll()">Encuadrar todo</button>
-    <button class="map-btn" id="btnCircles" onclick="toggleRoadRadii()">Radios por carretera</button>
-  </div>
-  <button id="mobileOpenBtn" onclick="toggleMobilePanel()">&#9776; Estaciones</button>
-  <div class="map-legend">
-    <div class="leg-title">Distancia desde base</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--cyan)"></div>Punto base</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--green)"></div>&lt; 100 km</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--yellow)"></div>100 - 300 km</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--orange)"></div>300 - 500 km</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--red)"></div>&gt; 500 km</div>
-    <div class="leg-row"><div class="leg-dot" style="background:var(--muted)"></div>Sin calcular</div>
-  </div>
-</div>
-</div>
-<div class="toast" id="toast"></div>
-
 <script>
-const STATIONS=[{"APIES": 2928, "COORDENADA_X": -62.38347, "COORDENADA_Y": -37.03879, "OPERADOR": "OPESSA GUAMINI", "DIRECCION": "RUTA PROVINCIAL 65 ASCENDENTE Y RUTA NACIONAL 33", "LOCALIDAD": "GUAMINI", "PROVINCIA": "Buenos Aires"}, {"APIES": 1005, "COORDENADA_X": -60.82234, "COORDENADA_Y": -32.65362, "OPERADOR": "OPESSA LA RIBERA", "DIRECCION": "AUTOPISTA BRIGADIER ESTANISLAO LOPEZ KM 28 ASCENDENTE", "LOCALIDAD": "TIMBUES", "PROVINCIA": "Santa Fe"}, {"APIES": 30548, "COORDENADA_X": -58.59089, "COORDENADA_Y": -34.4872, "OPERADOR": "OPESSA BANCALARI RN9", "DIRECCION": "AUTOPISTA 9 KM 23.5 ASCENDENTE", "LOCALIDAD": "SAN ISIDRO", "PROVINCIA": "Buenos Aires"}, {"APIES": 31039, "COORDENADA_X": -62.2454327, "COORDENADA_Y": -32.63832464, "OPERADOR": "OPESSA LEONES", "DIRECCION": "AUTOPISTA AUTOVIA ROSARIO - CORDOBA KM 448 ASCENDENTE", "LOCALIDAD": "LEONES", "PROVINCIA": "Córdoba"}, {"APIES": 3300, "COORDENADA_X": -57.70929, "COORDENADA_Y": -36.25745, "OPERADOR": "OPESSA DOLORES", "DIRECCION": "RUTA NACIONAL 2 KM 202.3 ASCENDENTE", "LOCALIDAD": "DOLORES", "PROVINCIA": "Buenos Aires"}, {"APIES": 30977, "COORDENADA_X": -67.1175, "COORDENADA_Y": -33.41254, "OPERADOR": "OPESSA DESAGUADERO", "DIRECCION": "RUTA NACIONAL 7 KM 862 ASCENDENTE", "LOCALIDAD": "DESAGUADERO", "PROVINCIA": "Mendoza"}, {"APIES": 1648, "COORDENADA_X": -62.98867, "COORDENADA_Y": -35.03745, "OPERADOR": "OPESSA ACA GRAL. VILLEGAS", "DIRECCION": "RUTA NACIONAL 188 ASCENDENTE Y RUTA NAC 33", "LOCALIDAD": "GENERAL VILLEGAS", "PROVINCIA": "Buenos Aires"}, {"APIES": 2052, "COORDENADA_X": -62.12754, "COORDENADA_Y": -31.42454, "OPERADOR": "OPESSA SAN FRANCISCO", "DIRECCION": "RUTA NACIONAL 19 ASCENDENTE Y RUTA NAC. 158", "LOCALIDAD": "SAN FRANCISCO", "PROVINCIA": "Córdoba"}, {"APIES": 1840, "COORDENADA_X": -70.07719, "COORDENADA_Y": -40.04849, "OPERADOR": "OPESSA ACA PIEDRA DEL AGUILA", "DIRECCION": "RUTA NACIONAL 237 KM 1446 ASCENDENTE", "LOCALIDAD": "PIEDRA DEL AGUILA", "PROVINCIA": "Neuquén"}, {"APIES": 1981, "COORDENADA_X": -62.721, "COORDENADA_Y": -36.00137, "OPERADOR": "OPESSA ACA TRENQUE LAUQUEN RN5", "DIRECCION": "RUTA NACIONAL 5 KM 446 DESCENDENTE", "LOCALIDAD": "TRENQUE LAUQUEN", "PROVINCIA": "Buenos Aires"}, {"APIES": 2064, "COORDENADA_X": -60.45887, "COORDENADA_Y": -33.227, "OPERADOR": "OPESSA FIGHIERA RN9 MANO PROVINCIA", "DIRECCION": "AUTOPISTA P E ARAMBURU KM 256 ASCENDENTE", "LOCALIDAD": "FIGHIERA", "PROVINCIA": "Santa Fe"}, {"APIES": 3253, "COORDENADA_X": -58.93797, "COORDENADA_Y": -34.19872, "OPERADOR": "OPESSA CAMPANA KM72 MANO PROVINCIA", "DIRECCION": "RUTA NACIONAL PANAMERICANA KM 72 ASCENDENTE", "LOCALIDAD": "CAMPANA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1686, "COORDENADA_X": -60.84512, "COORDENADA_Y": -34.6575, "OPERADOR": "OPESSA JUNIN RN7", "DIRECCION": "RUTA NACIONAL 7 KM 246 DESCENDENTE", "LOCALIDAD": "JUNIN", "PROVINCIA": "Buenos Aires"}, {"APIES": 421, "COORDENADA_X": -59.01384, "COORDENADA_Y": -34.12114, "OPERADOR": "OPESSA ACA ZARATE", "DIRECCION": "RUTA NACIONAL 12 ASCENDENTE Y 193", "LOCALIDAD": "ZARATE", "PROVINCIA": "Buenos Aires"}, {"APIES": 2908, "COORDENADA_X": -59.77805, "COORDENADA_Y": -35.62447, "OPERADOR": "OPESSA SALADILLO", "DIRECCION": "RUTA NACIONAL 205 KM 182 DESCENDENTE Y FROCHAM", "LOCALIDAD": "SALADILLO", "PROVINCIA": "Buenos Aires"}, {"APIES": 1641, "COORDENADA_X": -67.57905, "COORDENADA_Y": -39.04304, "OPERADOR": "OPESSA ACA GENERAL ROCA", "DIRECCION": "AVENIDA ROCA 20 Y BOLIVIA", "LOCALIDAD": "GENERAL ROCA", "PROVINCIA": "Río Negro"}, {"APIES": 2536, "COORDENADA_X": -58.50639, "COORDENADA_Y": -34.7117, "OPERADOR": "OPESSA RICCHERI MANO EZEIZA", "DIRECCION": "AUTOPISTA TTE GRAL PABLO RICCHIERI KM 33 ASCENDENTE", "LOCALIDAD": "ALDO BONZI", "PROVINCIA": "Buenos Aires"}, {"APIES": 2905, "COORDENADA_X": -54.56255, "COORDENADA_Y": -25.60447, "OPERADOR": "OPESSA PUERTO IGUAZU", "DIRECCION": "RUTA NACIONAL 12 KM 1639.3 ASCENDENTE", "LOCALIDAD": "PUERTO IGUAZU", "PROVINCIA": "Misiones"}, {"APIES": 2985, "COORDENADA_X": -58.52071741, "COORDENADA_Y": -34.51349633, "OPERADOR": "OPESSA DEBENEDETTI RN9 MANO PROVINCIA", "DIRECCION": "RUTA NACIONAL PANAMERICANA ASCENDENTE Y ACCESO DEBENEDETTI", "LOCALIDAD": "OLIVOS", "PROVINCIA": "Buenos Aires"}, {"APIES": 1862, "COORDENADA_X": -62.08229, "COORDENADA_Y": -38.88529, "OPERADOR": "OPESSA ACA PUNTA ALTA", "DIRECCION": "ROSALES 21 Y COLON", "LOCALIDAD": "PUNTA ALTA", "PROVINCIA": "Buenos Aires"}, {"APIES": 2119, "COORDENADA_X": -64.55372, "COORDENADA_Y": -31.98675, "OPERADOR": "OPESSA VILLA GRAL. BELGRANO", "DIRECCION": "RUTA PROVINCIAL 5 ASCENDENTE Y CHAMPAQUI", "LOCALIDAD": "VILLA GENERAL BELGRANO", "PROVINCIA": "Córdoba"}, {"APIES": 3254, "COORDENADA_X": -58.93847, "COORDENADA_Y": -34.19905, "OPERADOR": "OPESSA CAMPANA KM72 MANO CABA", "DIRECCION": "RUTA NACIONAL PANAMERICANA KM 72 DESCENDENTE", "LOCALIDAD": "CAMPANA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1182, "COORDENADA_X": -58.72305, "COORDENADA_Y": -34.4562, "OPERADOR": "OPESSA PILAR RN8 MANO PROVINCIA", "DIRECCION": "AUTOPISTA DEL SOL RAMAL PILAR (LADO PILAR) KM 36.5 ASCENDENTE", "LOCALIDAD": "TORTUGUITAS", "PROVINCIA": "Buenos Aires"}, {"APIES": 1454, "COORDENADA_X": -57.11825, "COORDENADA_Y": -29.72284, "OPERADOR": "OPESSA PASO DE LOS LIBRES", "DIRECCION": "RUTA NACIONAL 117 KM 9 ASCENDENTE", "LOCALIDAD": "PASO DE LOS LIBRES", "PROVINCIA": "Corrientes"}, {"APIES": 1142, "COORDENADA_X": -58.7057, "COORDENADA_Y": -34.43964, "OPERADOR": "OPESSA GARIN RN9 MANO PROVINCIA", "DIRECCION": "AUTOPISTA DEL SOL RAMAL CAMPANA (LADO CAMPANA) KM 36.5 ASCENDENTE", "LOCALIDAD": "TORTUGUITAS", "PROVINCIA": "Buenos Aires"}, {"APIES": 856, "COORDENADA_X": -60.99064, "COORDENADA_Y": -32.03042, "OPERADOR": "OPESSA COLASTINE", "DIRECCION": "AUTOPISTA ROSARIO / SANTA FE KM 101 ASCENDENTE", "LOCALIDAD": "AROCENA", "PROVINCIA": "Santa Fe"}, {"APIES": 1702, "COORDENADA_X": -59.08439471, "COORDENADA_Y": -36.02751772, "OPERADOR": "OPESSA LAS FLORES", "DIRECCION": "RUTA NACIONAL 3 KM 187.3 ASCENDENTE Y AVENIDA MANUEL VENANCIO PAZ", "LOCALIDAD": "LAS FLORES", "PROVINCIA": "Buenos Aires"}, {"APIES": 2563, "COORDENADA_X": -58.50775, "COORDENADA_Y": -34.71472, "OPERADOR": "OPESSA RICCHERI MANO CABA", "DIRECCION": "AUTOPISTA TTE GRAL PABLO RICCHIERI KM 36.3 DESCENDENTE", "LOCALIDAD": "ALDO BONZI", "PROVINCIA": "Buenos Aires"}, {"APIES": 3299, "COORDENADA_X": -58.30322, "COORDENADA_Y": -34.68492, "OPERADOR": "OPESSA AUBASA MANO CABA", "DIRECCION": "AUTOPISTA LA PLATA / BUENOS AIRES KM 13.5 ASCENDENTE", "LOCALIDAD": "AVELLANEDA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1317, "COORDENADA_X": -58.89462, "COORDENADA_Y": -27.44067, "OPERADOR": "OPESSA ACA BARRANQUERAS", "DIRECCION": "RUTA NACIONAL 16 KM 6 ASCENDENTE", "LOCALIDAD": "BARRANQUERAS", "PROVINCIA": "Chaco"}, {"APIES": 2989, "COORDENADA_X": -61.46484, "COORDENADA_Y": -31.25759, "OPERADOR": "OPESSA RAFAELA RIO DE JANEIRO", "DIRECCION": "AVENIDA SANTA FE 2460 Y RIO DE JANEIRO", "LOCALIDAD": "RAFAELA", "PROVINCIA": "Santa Fe"}, {"APIES": 525, "COORDENADA_X": -57.92712, "COORDENADA_Y": -34.90692, "OPERADOR": "OPESSA BERISSO 122 Y 60", "DIRECCION": "CALLE 122 Y CALLE 60", "LOCALIDAD": "BERISSO", "PROVINCIA": "Buenos Aires"}, {"APIES": 857, "COORDENADA_X": -60.28755, "COORDENADA_Y": -38.36092, "OPERADOR": "OPESSA TRES ARROYOS RN3", "DIRECCION": "RUTA NACIONAL 3 ASCENDENTE Y VELEZ SARFIELD", "LOCALIDAD": "TRES ARROYOS", "PROVINCIA": "Buenos Aires"}, {"APIES": 2991, "COORDENADA_X": -58.98241, "COORDENADA_Y": -34.58522, "OPERADOR": "OPESSA ACCESO OESTE RN7 MANO LUJAN", "DIRECCION": "RUTA NACIONAL 7 KM 54.8 ASCENDENTE", "LOCALIDAD": "GENERAL RODRGUEZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 977, "COORDENADA_X": -60.46054, "COORDENADA_Y": -33.22834, "OPERADOR": "OPESSA FIGHIERA RN9 MANO CABA", "DIRECCION": "AUTOPISTA AUT.GRAL.ARAMBURU RN N°9 KM 256 DESCENDENTE", "LOCALIDAD": "FIGHIERA", "PROVINCIA": "Santa Fe"}, {"APIES": 3003, "COORDENADA_X": -58.72417, "COORDENADA_Y": -34.45654, "OPERADOR": "OPESSA PILAR RN8 MANO CABA", "DIRECCION": "AUTOPISTA DEL SOL RAMAL PILAR (LADO BS AS) KM 36.5 DESCENDENTE", "LOCALIDAD": "TORTUGUITAS", "PROVINCIA": "Buenos Aires"}, {"APIES": 2987, "COORDENADA_X": -58.52234, "COORDENADA_Y": -34.51312, "OPERADOR": "OPESSA DEBENEDETTI RN9 MANO CABA", "DIRECCION": "RUTA NACIONAL PANAMERICANA DESCENDENTE Y ACCESO DEBENEDETTI", "LOCALIDAD": "OLIVOS", "PROVINCIA": "Buenos Aires"}, {"APIES": 3298, "COORDENADA_X": -58.30547, "COORDENADA_Y": -34.68495, "OPERADOR": "OPESSA AUBASA MANO LA PLATA", "DIRECCION": "AUTOPISTA BUENOS AIRES - LA PLATA KM 13.5 DESCENDENTE", "LOCALIDAD": "AVELLANEDA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1173, "COORDENADA_X": -59.8425, "COORDENADA_Y": -36.79459, "OPERADOR": "OPESSA ACA AZUL", "DIRECCION": "RUTA NACIONAL 3 KM 299 DESCENDENTE Y CAMINO VIEJO A TANDIL", "LOCALIDAD": "AZUL", "PROVINCIA": "Buenos Aires"}, {"APIES": 2992, "COORDENADA_X": -58.98255, "COORDENADA_Y": -34.58576, "OPERADOR": "OPESSA ACCESO OESTE RN7 MANO CABA", "DIRECCION": "RUTA NACIONAL 7 KM 54.8 DESCENDENTE", "LOCALIDAD": "GENERAL RODRGUEZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 2904, "COORDENADA_X": -59.04729, "COORDENADA_Y": -34.13489, "OPERADOR": "OPESSA ZARATE RN12", "DIRECCION": "RUTA NACIONAL 193 KM 3 DESCENDENTE", "LOCALIDAD": "ZARATE", "PROVINCIA": "Buenos Aires"}, {"APIES": 3329, "COORDENADA_X": -58.70625, "COORDENADA_Y": -34.43997, "OPERADOR": "OPESSA GARIN RN9 MANO CABA", "DIRECCION": "AUTOPISTA DEL SOL RAMAL CAMPANA (LADO A BS. AS.) KM 36.5 DESCENDENTE", "LOCALIDAD": "TORTUGUITAS", "PROVINCIA": "Buenos Aires"}, {"APIES": 907, "COORDENADA_X": -59.65554, "COORDENADA_Y": -29.1435, "OPERADOR": "OPESSA ACA RECONQUISTA", "DIRECCION": "BOULEVARD HIPOLITO YRIGOYEN Y PATRICIO DIEZ", "LOCALIDAD": "RECONQUISTA", "PROVINCIA": "Santa Fe"}, {"APIES": 3338, "COORDENADA_X": -61.97705, "COORDENADA_Y": -33.75042, "OPERADOR": "OPESSA VENADO TUERTO", "DIRECCION": "RUTA NACIONAL 8 ASCENDENTE E H. YRIGOYEN", "LOCALIDAD": "VENADO TUERTO", "PROVINCIA": "Santa Fe"}, {"APIES": 335, "COORDENADA_X": -58.79139, "COORDENADA_Y": -34.6333, "OPERADOR": "OPESSA MORENO", "DIRECCION": "DIAGONAL NORTE Y ACCESO OESTE", "LOCALIDAD": "MORENO", "PROVINCIA": "Buenos Aires"}, {"APIES": 99020, "COORDENADA_X": -57.91716774, "COORDENADA_Y": -34.89871054, "OPERADOR": "OPESSA FULL YPF YTEC", "DIRECCION": "AVENIDA DEL PETROLEO S/N 129 Y 143", "LOCALIDAD": "ENSENADA", "PROVINCIA": "Buenos Aires"}, {"APIES": 167, "COORDENADA_X": -58.48009, "COORDENADA_Y": -34.5308, "OPERADOR": "OPESSA VICENTE LOPEZ MAIPU", "DIRECCION": "AVENIDA MAIPU 760 Y GÜEMES", "LOCALIDAD": "VICENTE LOPEZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 348, "COORDENADA_X": -56.82707894, "COORDENADA_Y": -37.07838386, "OPERADOR": "OPESSA ECER MOVIL LIQUIDOS", "DIRECCION": "MACACHA GÜEMES 515", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 99010, "COORDENADA_X": -58.36224072, "COORDENADA_Y": -34.60541612, "OPERADOR": "OPESSA FULL YPF MADERO", "DIRECCION": "MACACHA GUEMES 515", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 3159, "COORDENADA_X": -58.37225, "COORDENADA_Y": -34.58709, "OPERADOR": "OPESSA CABA RETIRO TERMINAL", "DIRECCION": "AVENIDA ANTARTIDA ARGENTINA Y CALLE 10", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 13323, "COORDENADA_X": -58.48037, "COORDENADA_Y": -34.57347, "OPERADOR": "OPESSA OLAZABAL", "DIRECCION": "AVENIDA ALVAREZ THOMAS Y OLAZABAL", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 357, "COORDENADA_X": -56.82700712, "COORDENADA_Y": -37.07828439, "OPERADOR": "OPESSA ECER MOVIL FULL", "DIRECCION": "MACACHA GÜEMES 515", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 99053, "COORDENADA_X": -68.05401309, "COORDENADA_Y": -38.94951044, "OPERADOR": "OPESSA FULL YPF TALERO", "DIRECCION": "TALERO 360 ENTRE CÓRDOBA Y MENDOZA", "LOCALIDAD": "NEUQUEN", "PROVINCIA": "Neuquén"}, {"APIES": 3267, "COORDENADA_X": -58.52572, "COORDENADA_Y": -34.50534, "OPERADOR": "OPESSA MARTINEZ EDISON", "DIRECCION": "AVENIDA EDISON Y LA HABANA", "LOCALIDAD": "MARTINEZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 3326, "COORDENADA_X": -58.38084, "COORDENADA_Y": -34.66939, "OPERADOR": "OPESSA AVELLANEDA YRIGOYEN", "DIRECCION": "AVENIDA HIPOLITO YRIGOYEN 1067", "LOCALIDAD": "AVELLANEDA", "PROVINCIA": "Buenos Aires"}, {"APIES": 403, "COORDENADA_X": -58.40125, "COORDENADA_Y": -34.75554, "OPERADOR": "OPESSA ACA LOMAS DE ZAMORA", "DIRECCION": "AVENIDA HIPOLITO YRIGOYEN 8590", "LOCALIDAD": "LOMAS DE ZAMORA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1073, "COORDENADA_X": -60.53017, "COORDENADA_Y": -31.72795, "OPERADOR": "OPESSA ACA PARANA", "DIRECCION": "AVENIDA BUENOS AIRES 333 Y LAPRIDA", "LOCALIDAD": "PARANA", "PROVINCIA": "Entre Ríos"}, {"APIES": 1088, "COORDENADA_X": -60.5077, "COORDENADA_Y": -31.74825, "OPERADOR": "OPESSA PARANA ALMAFUERTE", "DIRECCION": "AVENIDA ALMAFUERTE 795 Y AYACUCHO", "LOCALIDAD": "PARANA", "PROVINCIA": "Entre Ríos"}, {"APIES": 3002, "COORDENADA_X": -58.6302, "COORDENADA_Y": -34.6533, "OPERADOR": "OPESSA ACA MORON", "DIRECCION": "AVENIDA BARTOLOME MITRE 1666 Y TOMAS GUIDO", "LOCALIDAD": "MORON", "PROVINCIA": "Buenos Aires"}, {"APIES": 3296, "COORDENADA_X": -60.64584, "COORDENADA_Y": -32.94345, "OPERADOR": "OPESSA ROSARIO ESPAÑA", "DIRECCION": "SANTA FE 1694 Y ESPAÑA", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 304, "COORDENADA_X": -58.63452627, "COORDENADA_Y": -34.4605749, "OPERADOR": "OPESSA GRAL. PACHECO", "DIRECCION": "RUTA NACIONAL 197 DESCENDENTE Y SARMIENTO", "LOCALIDAD": "GENERAL PACHECO", "PROVINCIA": "Buenos Aires"}, {"APIES": 1984, "COORDENADA_X": -60.2718744, "COORDENADA_Y": -38.38113036, "OPERADOR": "OPESSA ACA TRES ARROYOS CENTRO", "DIRECCION": "COLON Y LAVALLE", "LOCALIDAD": "TRES ARROYOS", "PROVINCIA": "Buenos Aires"}, {"APIES": 866, "COORDENADA_X": -60.70267, "COORDENADA_Y": -31.63545, "OPERADOR": "OPESSA SANTA FE PELLEGRINI", "DIRECCION": "BOULEVARD PELLEGRINI 2550", "LOCALIDAD": "SANTA FE", "PROVINCIA": "Santa Fe"}, {"APIES": 812, "COORDENADA_X": -60.63895, "COORDENADA_Y": -32.94297, "OPERADOR": "OPESSA ROSARIO URQUIZA", "DIRECCION": "MITRE Y URQUIZA", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 1908, "COORDENADA_X": -71.2983, "COORDENADA_Y": -41.13264, "OPERADOR": "OPESSA ACA BARILOCHE", "DIRECCION": "AVENIDA 12 DE OCTUBRE Y OTTO GOEDECKE", "LOCALIDAD": "SAN CARLOS DE BARILOCHE", "PROVINCIA": "Río Negro"}, {"APIES": 959, "COORDENADA_X": -60.68839, "COORDENADA_Y": -32.9063, "OPERADOR": "OPESSA ACA ROSARIO MARULL", "DIRECCION": "BOULEVARD RONDEAU 898 Y MARULL", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 3263, "COORDENADA_X": -64.20617, "COORDENADA_Y": -31.371, "OPERADOR": "OPESSA CORDOBA LA FRANCE", "DIRECCION": "MONSEÑOR PABLO CABRERA Y CARDEÑOZA", "LOCALIDAD": "CORDOBA", "PROVINCIA": "Córdoba"}, {"APIES": 1728, "COORDENADA_X": -57.54805, "COORDENADA_Y": -38.00925, "OPERADOR": "OPESSA MAR DEL PLATA CENTRO", "DIRECCION": "ALBERTI 2128 Y BUENOS AIRES", "LOCALIDAD": "MAR DEL PLATA", "PROVINCIA": "Buenos Aires"}, {"APIES": 2589, "COORDENADA_X": -65.30689, "COORDENADA_Y": -24.18292, "OPERADOR": "OPESSA JUJUY", "DIRECCION": "GENERAL GÜEMES Y LAMADRID", "LOCALIDAD": "SAN SALVADOR DE JUJUY", "PROVINCIA": "Jujuy"}, {"APIES": 2101, "COORDENADA_X": -64.25164, "COORDENADA_Y": -31.3503, "OPERADOR": "OPESSA CORDOBA ARGUELLO", "DIRECCION": "AVENIDA RECTA MARTINOLI Y TICHO BRAHE", "LOCALIDAD": "CORDOBA", "PROVINCIA": "Córdoba"}, {"APIES": 2011, "COORDENADA_X": -56.97187, "COORDENADA_Y": -37.24497, "OPERADOR": "OPESSA VILLA GESELL", "DIRECCION": "AVENIDA BUENOS AIRES Y BLVD GESELL", "LOCALIDAD": "VILLA GESELL", "PROVINCIA": "Buenos Aires"}, {"APIES": 149, "COORDENADA_X": -58.5302, "COORDENADA_Y": -34.61814, "OPERADOR": "OPESSA BEIRO CABA", "DIRECCION": "AVENIDA FRANCISCO BEIRO 5804 Y AV. GRAL. PAZ", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 31252, "COORDENADA_X": -68.8518731, "COORDENADA_Y": -32.9837738, "OPERADOR": "OPESSA MENDOZA CHACRAS", "DIRECCION": "MARIANO BOEDO Y ACCESO SUR", "LOCALIDAD": "LUJAN DE CUYO", "PROVINCIA": "Mendoza"}, {"APIES": 818, "COORDENADA_X": -58.43704, "COORDENADA_Y": -34.5515, "OPERADOR": "OPESSA ALCORTA CABA", "DIRECCION": "AVENIDA FIGUEROA ALCORTA 6608 Y ECHEVERRIA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 1854, "COORDENADA_X": -65.03875, "COORDENADA_Y": -42.7655, "OPERADOR": "OPESSA ACA PUERTO MADRYN", "DIRECCION": "MARCOS A ZAR 25 Y AVENIDA IRIGOYEN", "LOCALIDAD": "PUERTO MADRYN", "PROVINCIA": "Chubut"}, {"APIES": 182, "COORDENADA_X": -58.48434, "COORDENADA_Y": -34.49855, "OPERADOR": "OPESSA LA LUCILA", "DIRECCION": "AVENIDA DEL LIBERTADOR 3402 Y J INGENIEROS", "LOCALIDAD": "LA LUCILA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1458, "COORDENADA_X": -62.26875, "COORDENADA_Y": -38.71989, "OPERADOR": "OPESSA BAHIA BLANCA CENTRO", "DIRECCION": "VIEYTES 24 Y COLON", "LOCALIDAD": "BAHIA BLANCA", "PROVINCIA": "Buenos Aires"}, {"APIES": 2362, "COORDENADA_X": -65.2316786, "COORDENADA_Y": -26.82492418, "OPERADOR": "OPESSA TUCUMAN MATE DE LUNA MANO CERRO", "DIRECCION": "AVENIDA MATE DE LUNA Y EJERCITO DEL NORTE", "LOCALIDAD": "SAN MIGUEL DE TUCUMAN", "PROVINCIA": "Tucumán"}, {"APIES": 2917, "COORDENADA_X": -61.49409, "COORDENADA_Y": -31.25197, "OPERADOR": "OPESSA RAFAELA CENTRO", "DIRECCION": "BOULEVARD ROCA Y ARENALES", "LOCALIDAD": "RAFAELA", "PROVINCIA": "Santa Fe"}, {"APIES": 1727, "COORDENADA_X": -56.6898, "COORDENADA_Y": -36.72084, "OPERADOR": "OPESSA MAR DE AJO", "DIRECCION": "AVENIDA LIBERTADOR GRAL SAN MARTIN 1425", "LOCALIDAD": "MAR DE AJO", "PROVINCIA": "Buenos Aires"}, {"APIES": 2744, "COORDENADA_X": -68.83912, "COORDENADA_Y": -32.89205, "OPERADOR": "OPESSA ACA MENDOZA", "DIRECCION": "SAN MARTIN 958 Y AMIGORENA", "LOCALIDAD": "CAPITAL", "PROVINCIA": "Buenos Aires"}, {"APIES": 2701, "COORDENADA_X": -68.8602, "COORDENADA_Y": -32.90192, "OPERADOR": "OPESSA MENDOZA 5TA SECCION", "DIRECCION": "PASO DE LO ANDES 16 ENTRE MARIANO MORENO Y OLEGARIO ANDRADE", "LOCALIDAD": "CAPITAL", "PROVINCIA": "Buenos Aires"}, {"APIES": 1462, "COORDENADA_X": -62.2555, "COORDENADA_Y": -38.72047, "OPERADOR": "OPESSA BAHIA BLANCA BRANDSEN", "DIRECCION": "BRANDSEN 306 Y LAMADRID", "LOCALIDAD": "BAHIA BLANCA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1956, "COORDENADA_X": -59.12654, "COORDENADA_Y": -37.33172, "OPERADOR": "OPESSA TANDIL", "DIRECCION": "AVENIDA DR NICOLAS AVELLANEDA Y BOLIVAR", "LOCALIDAD": "TANDIL", "PROVINCIA": "Buenos Aires"}, {"APIES": 3235, "COORDENADA_X": -64.28804, "COORDENADA_Y": -31.29942, "OPERADOR": "OPESSA ACA VILLA ALLENDE", "DIRECCION": "AVENIDA GOYCOCHEA 1169", "LOCALIDAD": "VILLA ALLENDE", "PROVINCIA": "Córdoba"}, {"APIES": 2848, "COORDENADA_X": -66.33495, "COORDENADA_Y": -33.29304, "OPERADOR": "OPESSA SAN LUIS", "DIRECCION": "AVENIDA ESPAÑA Y MAIPU", "LOCALIDAD": "SAN LUIS", "PROVINCIA": "San Luis"}, {"APIES": 2907, "COORDENADA_X": -58.50692, "COORDENADA_Y": -34.57155, "OPERADOR": "OPESSA CONSTITUYENTES CABA", "DIRECCION": "AVENIDA DE LOS CONSTITUYENTES 6070", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 2903, "COORDENADA_X": -58.25142, "COORDENADA_Y": -32.48745, "OPERADOR": "OPESSA ACA CONCEPCION DEL URUGUAY", "DIRECCION": "GALARZA 1773 Y 9 DE JULIO", "LOCALIDAD": "CONCEPCION DEL URUGUAY", "PROVINCIA": "Entre Ríos"}, {"APIES": 3048, "COORDENADA_X": -58.48484, "COORDENADA_Y": -34.6452, "OPERADOR": "OPESSA OLIVERA CABA", "DIRECCION": "AVENIDA DIRECTORIO 4311 Y OLIVERA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 2499, "COORDENADA_X": -65.29476175, "COORDENADA_Y": -26.81330641, "OPERADOR": "OPESSA TUCUMAN YERBA BUENA", "DIRECCION": "AVENIDA ACONQUIJA 1784", "LOCALIDAD": "YERBA BUENA - MARCOS PAZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 3160, "COORDENADA_X": -58.42629, "COORDENADA_Y": -34.5963, "OPERADOR": "OPESSA PRINGLES CABA", "DIRECCION": "AVENIDA CORDOBA 4201 Y PRINGLES", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 3340, "COORDENADA_X": -58.46687, "COORDENADA_Y": -34.55017, "OPERADOR": "OPESSA AZURDUY CABA", "DIRECCION": "AVENIDA CABILDO 3501 Y JUANA AZURDUY", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 2822, "COORDENADA_X": -68.73819664, "COORDENADA_Y": -32.92308382, "OPERADOR": "OPESSA MENDOZA RODEO DE LA CRUZ", "DIRECCION": "CARRIL NACIONAL (EX BAND DE LOS ANDES)", "LOCALIDAD": "GUAYMALLEN", "PROVINCIA": "Mendoza"}, {"APIES": 3232, "COORDENADA_X": -58.275, "COORDENADA_Y": -34.71229, "OPERADOR": "OPESSA ACA BERNAL", "DIRECCION": "AVENIDA ZAPIOLA 26 Y SAN MARTIN", "LOCALIDAD": "BERNAL", "PROVINCIA": "Buenos Aires"}, {"APIES": 7, "COORDENADA_X": -58.47089, "COORDENADA_Y": -34.54595, "OPERADOR": "OPESSA CABILDO CABA", "DIRECCION": "AVENIDA CABILDO 4108 Y VILELA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 2916, "COORDENADA_X": -58.871, "COORDENADA_Y": -34.44562, "OPERADOR": "OPESSA PILAR MAGNOLIAS", "DIRECCION": "LAS MAGNOLIAS Y RUTA PANAMERICANA KM 50", "LOCALIDAD": "PILAR", "PROVINCIA": "Buenos Aires"}, {"APIES": 3105, "COORDENADA_X": -58.42904, "COORDENADA_Y": -34.6085, "OPERADOR": "OPESSA YATAY CABA", "DIRECCION": "AVENIDA DIAZ VELEZ 4373 Y YATAY", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 3318, "COORDENADA_X": -58.4322, "COORDENADA_Y": -34.58312, "OPERADOR": "OPESSA NICARAGUA CABA", "DIRECCION": "AVENIDA J B JUSTO 1215 Y NICARAGUA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 184, "COORDENADA_X": -58.51175, "COORDENADA_Y": -34.52389, "OPERADOR": "OPESSA UGARTE", "DIRECCION": "AVENIDA GOB. UGARTE 3501 Y PANAMERICANA", "LOCALIDAD": "MUNRO", "PROVINCIA": "Buenos Aires"}, {"APIES": 1201, "COORDENADA_X": -58.1842, "COORDENADA_Y": -26.18812, "OPERADOR": "OPESSA FORMOSA", "DIRECCION": "GOBERNADOR GUTNISKI 1701", "LOCALIDAD": "FORMOSA", "PROVINCIA": "Formosa"}, {"APIES": 3330, "COORDENADA_X": -65.403, "COORDENADA_Y": -24.78025, "OPERADOR": "OPESSA SALTA", "DIRECCION": "AVENIDA TOLEDO Y PASAJE N. ROLDAN", "LOCALIDAD": "SALTA", "PROVINCIA": "Salta"}, {"APIES": 3319, "COORDENADA_X": -62.25364, "COORDENADA_Y": -38.73009, "OPERADOR": "OPESSA BAHIA BLANCA PARCHAPPE", "DIRECCION": "AVENIDA PARCHAPPE Y FALUCHO", "LOCALIDAD": "BAHIA BLANCA", "PROVINCIA": "Buenos Aires"}, {"APIES": 1414, "COORDENADA_X": -58.6923, "COORDENADA_Y": -34.57289, "OPERADOR": "OPESSA BELLA VISTA", "DIRECCION": "AVENIDA GASPAR CAMPOS Y MORON", "LOCALIDAD": "BELLA VISTA", "PROVINCIA": "Buenos Aires"}, {"APIES": 504, "COORDENADA_X": -57.96895, "COORDENADA_Y": -34.90079, "OPERADOR": "OPESSA LA PLATA 7 Y 32", "DIRECCION": "CALLE 7 Y CALLE 32", "LOCALIDAD": "LA PLATA", "PROVINCIA": "Buenos Aires"}, {"APIES": 983, "COORDENADA_X": -60.66697, "COORDENADA_Y": -32.96364, "OPERADOR": "OPESSA ROSARIO OVIDIO LAGOS", "DIRECCION": "27 DE FEBRERO 2801 Y OVIDIO LAGOS", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 1975, "COORDENADA_X": -65.29137, "COORDENADA_Y": -43.26342, "OPERADOR": "OPESSA TRELEW", "DIRECCION": "AVENIDA HIPOLITO YRIGOYEN Y MARIA HUMPHREYS", "LOCALIDAD": "TRELEW", "PROVINCIA": "Chubut"}, {"APIES": 973, "COORDENADA_X": -60.65522, "COORDENADA_Y": -32.95017, "OPERADOR": "OPESSA ACA ROSARIO OROÑO", "DIRECCION": "BOULEVARD OROÑO 1302 Y TRES DE FEBRERO", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 160, "COORDENADA_X": -58.52754, "COORDENADA_Y": -34.48164, "OPERADOR": "OPESSA SAN ISIDRO HIPODROMO", "DIRECCION": "AVENIDA BERNABE MARQUEZ 1195 Y ANDRES ROLON", "LOCALIDAD": "SAN ISIDRO", "PROVINCIA": "Buenos Aires"}, {"APIES": 2531, "COORDENADA_X": -68.79445, "COORDENADA_Y": -32.9037, "OPERADOR": "OPESSA MENDOZA SHOPPING", "DIRECCION": "ACCESO ESTE Y AVELLANEDA", "LOCALIDAD": "SAN JOSE", "PROVINCIA": "Mendoza"}, {"APIES": 1910, "COORDENADA_X": -71.30973022, "COORDENADA_Y": -41.13463457, "OPERADOR": "OPESSA BARILOCHE CENTRO", "DIRECCION": "MORENO 19 Y MORALES", "LOCALIDAD": "SAN CARLOS DE BARILOCHE", "PROVINCIA": "Río Negro"}, {"APIES": 2446, "COORDENADA_X": -65.19339428, "COORDENADA_Y": -26.83351697, "OPERADOR": "OPESSA TUCUMAN TERMINAL", "DIRECCION": "B. ARAOZ Y W. POSE", "LOCALIDAD": "SAN MIGUEL DE TUCUMAN", "PROVINCIA": "Tucumán"}, {"APIES": 30943, "COORDENADA_X": -58.6428, "COORDENADA_Y": -34.4403, "OPERADOR": "OPESSA NORDELTA", "DIRECCION": "AVENIDA DE LOS LAGOS 330", "LOCALIDAD": "TIGRE", "PROVINCIA": "Buenos Aires"}, {"APIES": 1554, "COORDENADA_X": -67.49705, "COORDENADA_Y": -45.86542, "OPERADOR": "OPESSA ACA COMODORO RIVADAVIA", "DIRECCION": "ALVEAR Y DORREGO", "LOCALIDAD": "COMODORO RIVADAVIA", "PROVINCIA": "Chubut"}, {"APIES": 3334, "COORDENADA_X": -65.242287, "COORDENADA_Y": -26.81026333, "OPERADOR": "OPESSA TUCUMAN BULNES", "DIRECCION": "AVENIDA BELGRANO Y BULNES", "LOCALIDAD": "SAN MIGUEL DE TUCUMAN", "PROVINCIA": "Tucumán"}, {"APIES": 1847, "COORDENADA_X": -56.8705, "COORDENADA_Y": -37.11009, "OPERADOR": "OPESSA ACA PINAMAR", "DIRECCION": "JASON Y JUPITER", "LOCALIDAD": "PINAMAR", "PROVINCIA": "Buenos Aires"}, {"APIES": 989, "COORDENADA_X": -60.64645, "COORDENADA_Y": -32.99045, "OPERADOR": "OPESSA ACA ROSARIO URIBURU", "DIRECCION": "AVENIDA GENERAL SAN MARTIN Y AVENIDA URIBURU", "LOCALIDAD": "ROSARIO", "PROVINCIA": "Santa Fe"}, {"APIES": 2918, "COORDENADA_X": -58.01639, "COORDENADA_Y": -31.39505, "OPERADOR": "OPESSA CONCORDIA CENTRO", "DIRECCION": "CATAMARCA 90 Y PELLEGRINI", "LOCALIDAD": "CONCORDIA", "PROVINCIA": "Entre Ríos"}, {"APIES": 1676, "COORDENADA_X": -60.9447, "COORDENADA_Y": -34.59405, "OPERADOR": "OPESSA ACA JUNIN", "DIRECCION": "GRAL. CORNELIO SAAVEDRA Y LEBEHNSON", "LOCALIDAD": "JUNIN", "PROVINCIA": "Buenos Aires"}, {"APIES": 2694, "COORDENADA_X": -68.514, "COORDENADA_Y": -31.54137, "OPERADOR": "OPESSA ACA SAN JUAN", "DIRECCION": "9 DE JULIO ESTE 802 Y RAWSON", "LOCALIDAD": "SAN JUAN", "PROVINCIA": "San Juan"}, {"APIES": 1335, "COORDENADA_X": -58.98205, "COORDENADA_Y": -27.45464, "OPERADOR": "OPESSA ACA RESISTENCIA", "DIRECCION": "AVENIDA 9 DE JULIO 499 Y AVENIDA ITALIA", "LOCALIDAD": "RESISTENCIA", "PROVINCIA": "Chaco"}, {"APIES": 2102, "COORDENADA_X": -64.22604, "COORDENADA_Y": -31.36395, "OPERADOR": "OPESSA CORDOBA LA CORDILLERA", "DIRECCION": "AVENIDA DE LA CORDILLERA 3947 Y SPILIMBERGO", "LOCALIDAD": "CORDOBA", "PROVINCIA": "Córdoba"}, {"APIES": 2784, "COORDENADA_X": -68.33647, "COORDENADA_Y": -34.61425, "OPERADOR": "OPESSA ACA SAN RAFAEL", "DIRECCION": "AVENIDA HIPOLITO YRIGOYEN 515 Y 9 DE JULIO", "LOCALIDAD": "SAN RAFAEL", "PROVINCIA": "Mendoza"}, {"APIES": 82, "COORDENADA_X": -58.44684, "COORDENADA_Y": -34.60805, "OPERADOR": "OPESSA ACA CABALLITO CABA", "DIRECCION": "AVENIDA GAONA 1204 Y MARTIN DE GAINZA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 1105, "COORDENADA_X": -58.00604, "COORDENADA_Y": -31.29497, "OPERADOR": "OPESSA CONCORDIA TERMAS", "DIRECCION": "HUARTE Y M ROSCH", "LOCALIDAD": "CONCORDIA", "PROVINCIA": "Entre Ríos"}, {"APIES": 3088, "COORDENADA_X": -58.68642, "COORDENADA_Y": -34.64889, "OPERADOR": "OPESSA ITUZAINGO", "DIRECCION": "INT CARLOS RATTI 1720 Y MONROE", "LOCALIDAD": "ITUZAINGO", "PROVINCIA": "Buenos Aires"}, {"APIES": 2, "COORDENADA_X": -58.3892, "COORDENADA_Y": -34.64512, "OPERADOR": "OPESSA ACA VELEZ SARSFIELD CABA", "DIRECCION": "AVENIDA DR VELEZ SARSFIELD 850 Y TOLL", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 2657, "COORDENADA_X": -68.5145, "COORDENADA_Y": -31.53605, "OPERADOR": "OPESSA SAN JUAN RIVADAVIA", "DIRECCION": "AVENIDA RAWSON SUR 216 Y RIVADAVIA", "LOCALIDAD": "SAN JUAN", "PROVINCIA": "San Juan"}, {"APIES": 44, "COORDENADA_X": -58.45034, "COORDENADA_Y": -34.68075, "OPERADOR": "OPESSA ACA AUTODROMO CABA", "DIRECCION": "AVENIDA CNEL JOSE SEGUNDO ROCA 4550 Y ESCALADA", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 1925, "COORDENADA_X": -71.34292, "COORDENADA_Y": -40.15462, "OPERADOR": "OPESSA SAN MARTIN DE LOS ANDES", "DIRECCION": "AVENIDA KOESSLER Y CURRUHUINCA", "LOCALIDAD": "SAN MARTIN DE LOS ANDES", "PROVINCIA": "Neuquén"}, {"APIES": 1238, "COORDENADA_X": -68.79312, "COORDENADA_Y": -32.93247, "OPERADOR": "OPESSA MENDOZA MAIPU", "DIRECCION": "RODRIGUEZ PEÑA 1130 Y CORONEL RODRIGUEZ", "LOCALIDAD": "MAIPU", "PROVINCIA": "Mendoza"}, {"APIES": 2782, "COORDENADA_X": -68.33492, "COORDENADA_Y": -34.62559, "OPERADOR": "OPESSA SAN RAFAEL SARMIENTO", "DIRECCION": "AVENIDA EL LIBERTADOR Y SARMIENTO", "LOCALIDAD": "SAN RAFAEL", "PROVINCIA": "Mendoza"}, {"APIES": 3073, "COORDENADA_X": -58.47172, "COORDENADA_Y": -34.52537, "OPERADOR": "OPESSA MELO", "DIRECCION": "AVENIDA DEL LIBERTADOR Y MELO", "LOCALIDAD": "VICENTE LOPEZ", "PROVINCIA": "Buenos Aires"}, {"APIES": 84, "COORDENADA_X": -58.41337, "COORDENADA_Y": -34.61054, "OPERADOR": "OPESSA ACA ONCE CABA", "DIRECCION": "AVENIDA RIVADAVIA 3341 Y AGÜERO", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 95, "COORDENADA_X": -58.4447, "COORDENADA_Y": -34.58487, "OPERADOR": "OPESSA DORREGO CABA", "DIRECCION": "AVENIDA CORDOBA 5984 Y DORREGO", "LOCALIDAD": "CIUDAD DE BUENOS AIRES", "PROVINCIA": "CABA"}, {"APIES": 523, "COORDENADA_X": -57.89605, "COORDENADA_Y": -34.87522, "OPERADOR": "OPESSA BERISSO REFINERIA", "DIRECCION": "CALLE 2 Y CALLE 158", "LOCALIDAD": "BERISSO", "PROVINCIA": "Buenos Aires"}, {"APIES": 3228, "COORDENADA_X": -68.09025, "COORDENADA_Y": -38.95967, "OPERADOR": "OPESSA NEUQUEN", "DIRECCION": "JUAN JULIAN LASTRA Y SAAVEDRA", "LOCALIDAD": "NEUQUEN", "PROVINCIA": "Neuquén"}, {"APIES": 2291, "COORDENADA_X": -65.23183685, "COORDENADA_Y": -26.82531492, "OPERADOR": "OPESSA TUCUMAN MATE DE LUNA MANO CENTRO", "DIRECCION": "AVENIDA FERNANDO MATE DE LUNA Y AVENIDA COLON", "LOCALIDAD": "SAN MIGUEL DE TUCUMAN", "PROVINCIA": "Tucumán"}, {"APIES": 2039, "COORDENADA_X": -57.55295, "COORDENADA_Y": -37.96547, "OPERADOR": "OPESSA MAR DEL PLATA TEJEDOR", "DIRECCION": "AVENIDA CONSTITUCION Y CARLOS TEJEDOR", "LOCALIDAD": "MAR DEL PLATA", "PROVINCIA": "Buenos Aires"}];
-
-// ── STATE ──
-let refApies=973,rows=STATIONS.map(s=>({...s,distKm:null,durSec:null,method:null,status:"pending"}));
-let running=false,stopFlag=false,maxDist=0,showRadii=false;
-let typeFilter='all';
-let markers={},routeLineLayer,radiiLayer,multiRouteLayer;
-let selectedItem=null,multiSelection=[],multiDistFilter="all";
-let rangeMin=0,rangeMax=3000;       // tab0 slider
-let mRangeMin=0,mRangeMax=3000;    // tab2 slider
-let multiDepApies=null;              // departure point for multi-parada
+const STATIONS=[{"APIES":2928,"COORDENADA_X":-62.38347,"COORDENADA_Y":-37.03879,"OPERADOR":"OPESSA GUAMINI","LOCALIDAD":"GUAMINI","PROVINCIA":"Buenos Aires"},{"APIES":1005,"COORDENADA_X":-60.82234,"COORDENADA_Y":-32.65362,"OPERADOR":"OPESSA LA RIBERA","LOCALIDAD":"TIMBUES","PROVINCIA":"Santa Fe"},{"APIES":30548,"COORDENADA_X":-58.59089,"COORDENADA_Y":-34.4872,"OPERADOR":"OPESSA BANCALARI RN9","LOCALIDAD":"SAN ISIDRO","PROVINCIA":"Buenos Aires"},{"APIES":31039,"COORDENADA_X":-62.2454327,"COORDENADA_Y":-32.63832464,"OPERADOR":"OPESSA LEONES","LOCALIDAD":"LEONES","PROVINCIA":"Córdoba"},{"APIES":3300,"COORDENADA_X":-57.70929,"COORDENADA_Y":-36.25745,"OPERADOR":"OPESSA DOLORES","LOCALIDAD":"DOLORES","PROVINCIA":"Buenos Aires"},{"APIES":30977,"COORDENADA_X":-67.1175,"COORDENADA_Y":-33.41254,"OPERADOR":"OPESSA DESAGUADERO","LOCALIDAD":"DESAGUADERO","PROVINCIA":"Mendoza"},{"APIES":1648,"COORDENADA_X":-62.98867,"COORDENADA_Y":-35.03745,"OPERADOR":"OPESSA ACA GRAL. VILLEGAS","LOCALIDAD":"GENERAL VILLEGAS","PROVINCIA":"Buenos Aires"},{"APIES":2052,"COORDENADA_X":-62.12754,"COORDENADA_Y":-31.42454,"OPERADOR":"OPESSA SAN FRANCISCO","LOCALIDAD":"SAN FRANCISCO","PROVINCIA":"Córdoba"},{"APIES":1840,"COORDENADA_X":-70.07719,"COORDENADA_Y":-40.04849,"OPERADOR":"OPESSA ACA PIEDRA DEL AGUILA","LOCALIDAD":"PIEDRA DEL AGUILA","PROVINCIA":"Neuquén"},{"APIES":1981,"COORDENADA_X":-62.721,"COORDENADA_Y":-36.00137,"OPERADOR":"OPESSA ACA TRENQUE LAUQUEN RN5","LOCALIDAD":"TRENQUE LAUQUEN","PROVINCIA":"Buenos Aires"},{"APIES":2064,"COORDENADA_X":-60.45887,"COORDENADA_Y":-33.227,"OPERADOR":"OPESSA FIGHIERA RN9","LOCALIDAD":"FIGHIERA","PROVINCIA":"Santa Fe"},{"APIES":3253,"COORDENADA_X":-58.93797,"COORDENADA_Y":-34.19872,"OPERADOR":"OPESSA CAMPANA KM72","LOCALIDAD":"CAMPANA","PROVINCIA":"Buenos Aires"},{"APIES":1686,"COORDENADA_X":-60.84512,"COORDENADA_Y":-34.6575,"OPERADOR":"OPESSA JUNIN RN7","LOCALIDAD":"JUNIN","PROVINCIA":"Buenos Aires"},{"APIES":421,"COORDENADA_X":-59.01384,"COORDENADA_Y":-34.12114,"OPERADOR":"OPESSA ACA ZARATE","LOCALIDAD":"ZARATE","PROVINCIA":"Buenos Aires"},{"APIES":2908,"COORDENADA_X":-59.77805,"COORDENADA_Y":-35.62447,"OPERADOR":"OPESSA SALADILLO","LOCALIDAD":"SALADILLO","PROVINCIA":"Buenos Aires"},{"APIES":1641,"COORDENADA_X":-67.57905,"COORDENADA_Y":-39.04304,"OPERADOR":"OPESSA ACA GENERAL ROCA","LOCALIDAD":"GENERAL ROCA","PROVINCIA":"Río Negro"},{"APIES":2905,"COORDENADA_X":-54.56255,"COORDENADA_Y":-25.60447,"OPERADOR":"OPESSA PUERTO IGUAZU","LOCALIDAD":"PUERTO IGUAZU","PROVINCIA":"Misiones"},{"APIES":1862,"COORDENADA_X":-62.08229,"COORDENADA_Y":-38.88529,"OPERADOR":"OPESSA ACA PUNTA ALTA","LOCALIDAD":"PUNTA ALTA","PROVINCIA":"Buenos Aires"},{"APIES":2119,"COORDENADA_X":-64.55372,"COORDENADA_Y":-31.98675,"OPERADOR":"OPESSA VILLA GRAL. BELGRANO","LOCALIDAD":"VILLA GENERAL BELGRANO","PROVINCIA":"Córdoba"},{"APIES":1182,"COORDENADA_X":-58.72305,"COORDENADA_Y":-34.4562,"OPERADOR":"OPESSA PILAR RN8","LOCALIDAD":"TORTUGUITAS","PROVINCIA":"Buenos Aires"},{"APIES":1454,"COORDENADA_X":-57.11825,"COORDENADA_Y":-29.72284,"OPERADOR":"OPESSA PASO DE LOS LIBRES","LOCALIDAD":"PASO DE LOS LIBRES","PROVINCIA":"Corrientes"},{"APIES":856,"COORDENADA_X":-60.99064,"COORDENADA_Y":-32.03042,"OPERADOR":"OPESSA COLASTINE","LOCALIDAD":"AROCENA","PROVINCIA":"Santa Fe"},{"APIES":2563,"COORDENADA_X":-58.50775,"COORDENADA_Y":-34.71472,"OPERADOR":"OPESSA RICCHIERI MANO CABA","LOCALIDAD":"ALDO BONZI","PROVINCIA":"Buenos Aires"},{"APIES":3299,"COORDENADA_X":-58.30322,"COORDENADA_Y":-34.68492,"OPERADOR":"OPESSA AUBASA MANO CABA","LOCALIDAD":"AVELLANEDA","PROVINCIA":"Buenos Aires"},{"APIES":1317,"COORDENADA_X":-58.89462,"COORDENADA_Y":-27.44067,"OPERADOR":"OPESSA ACA BARRANQUERAS","LOCALIDAD":"BARRANQUERAS","PROVINCIA":"Chaco"},{"APIES":3338,"COORDENADA_X":-61.97705,"COORDENADA_Y":-33.75042,"OPERADOR":"OPESSA VENADO TUERTO","LOCALIDAD":"VENADO TUERTO","PROVINCIA":"Santa Fe"},{"APIES":335,"COORDENADA_X":-58.79139,"COORDENADA_Y":-34.6333,"OPERADOR":"OPESSA MORENO","LOCALIDAD":"MORENO","PROVINCIA":"Buenos Aires"},{"APIES":99020,"COORDENADA_X":-57.91716774,"COORDENADA_Y":-34.89871054,"OPERADOR":"OPESSA FULL YPF YTEC","LOCALIDAD":"ENSENADA","PROVINCIA":"Buenos Aires"},{"APIES":167,"COORDENADA_X":-58.48009,"COORDENADA_Y":-34.5308,"OPERADOR":"OPESSA VICENTE LOPEZ MAIPU","LOCALIDAD":"VICENTE LOPEZ","PROVINCIA":"Buenos Aires"},{"APIES":348,"COORDENADA_X":-56.82707894,"COORDENADA_Y":-37.07838386,"OPERADOR":"OPESSA ECER MOVIL LIQUIDOS","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":99010,"COORDENADA_X":-58.36224072,"COORDENADA_Y":-34.60541612,"OPERADOR":"OPESSA FULL YPF MADERO","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3159,"COORDENADA_X":-58.37225,"COORDENADA_Y":-34.58709,"OPERADOR":"OPESSA CABA RETIRO TERMINAL","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":13323,"COORDENADA_X":-58.48037,"COORDENADA_Y":-34.57347,"OPERADOR":"OPESSA OLAZABAL","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":99053,"COORDENADA_X":-68.05401309,"COORDENADA_Y":-38.94951044,"OPERADOR":"OPESSA FULL YPF TALERO","LOCALIDAD":"NEUQUEN","PROVINCIA":"Neuquén"},{"APIES":3267,"COORDENADA_X":-58.52572,"COORDENADA_Y":-34.50534,"OPERADOR":"OPESSA MARTINEZ EDISON","LOCALIDAD":"MARTINEZ","PROVINCIA":"Buenos Aires"},{"APIES":3326,"COORDENADA_X":-58.38084,"COORDENADA_Y":-34.66939,"OPERADOR":"OPESSA AVELLANEDA YRIGOYEN","LOCALIDAD":"AVELLANEDA","PROVINCIA":"Buenos Aires"},{"APIES":403,"COORDENADA_X":-58.40125,"COORDENADA_Y":-34.75554,"OPERADOR":"OPESSA ACA LOMAS DE ZAMORA","LOCALIDAD":"LOMAS DE ZAMORA","PROVINCIA":"Buenos Aires"},{"APIES":1073,"COORDENADA_X":-60.53017,"COORDENADA_Y":-31.72795,"OPERADOR":"OPESSA ACA PARANA","LOCALIDAD":"PARANA","PROVINCIA":"Entre Ríos"},{"APIES":3296,"COORDENADA_X":-60.64584,"COORDENADA_Y":-32.94345,"OPERADOR":"OPESSA ROSARIO ESPAÑA","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":1984,"COORDENADA_X":-60.2718744,"COORDENADA_Y":-38.38113036,"OPERADOR":"OPESSA ACA TRES ARROYOS CENTRO","LOCALIDAD":"TRES ARROYOS","PROVINCIA":"Buenos Aires"},{"APIES":866,"COORDENADA_X":-60.70267,"COORDENADA_Y":-31.63545,"OPERADOR":"OPESSA SANTA FE PELLEGRINI","LOCALIDAD":"SANTA FE","PROVINCIA":"Santa Fe"},{"APIES":812,"COORDENADA_X":-60.63895,"COORDENADA_Y":-32.94297,"OPERADOR":"OPESSA ROSARIO URQUIZA","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":1908,"COORDENADA_X":-71.2983,"COORDENADA_Y":-41.13264,"OPERADOR":"OPESSA ACA BARILOCHE","LOCALIDAD":"SAN CARLOS DE BARILOCHE","PROVINCIA":"Río Negro"},{"APIES":959,"COORDENADA_X":-60.68839,"COORDENADA_Y":-32.9063,"OPERADOR":"OPESSA ACA ROSARIO MARULL","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":3263,"COORDENADA_X":-64.20617,"COORDENADA_Y":-31.371,"OPERADOR":"OPESSA CORDOBA LA FRANCE","LOCALIDAD":"CORDOBA","PROVINCIA":"Córdoba"},{"APIES":1728,"COORDENADA_X":-57.54805,"COORDENADA_Y":-38.00925,"OPERADOR":"OPESSA MAR DEL PLATA CENTRO","LOCALIDAD":"MAR DEL PLATA","PROVINCIA":"Buenos Aires"},{"APIES":2589,"COORDENADA_X":-65.30689,"COORDENADA_Y":-24.18292,"OPERADOR":"OPESSA JUJUY","LOCALIDAD":"SAN SALVADOR DE JUJUY","PROVINCIA":"Jujuy"},{"APIES":2101,"COORDENADA_X":-64.25164,"COORDENADA_Y":-31.3503,"OPERADOR":"OPESSA CORDOBA ARGUELLO","LOCALIDAD":"CORDOBA","PROVINCIA":"Córdoba"},{"APIES":149,"COORDENADA_X":-58.5302,"COORDENADA_Y":-34.61814,"OPERADOR":"OPESSA BEIRO CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":818,"COORDENADA_X":-58.43704,"COORDENADA_Y":-34.5515,"OPERADOR":"OPESSA ALCORTA CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":1854,"COORDENADA_X":-65.03875,"COORDENADA_Y":-42.7655,"OPERADOR":"OPESSA ACA PUERTO MADRYN","LOCALIDAD":"PUERTO MADRYN","PROVINCIA":"Chubut"},{"APIES":182,"COORDENADA_X":-58.48434,"COORDENADA_Y":-34.49855,"OPERADOR":"OPESSA LA LUCILA","LOCALIDAD":"LA LUCILA","PROVINCIA":"Buenos Aires"},{"APIES":1458,"COORDENADA_X":-62.2555,"COORDENADA_Y":-38.72047,"OPERADOR":"OPESSA BAHIA BLANCA CENTRO","LOCALIDAD":"BAHIA BLANCA","PROVINCIA":"Buenos Aires"},{"APIES":2362,"COORDENADA_X":-65.2316786,"COORDENADA_Y":-26.82492418,"OPERADOR":"OPESSA TUCUMAN MATE DE LUNA","LOCALIDAD":"SAN MIGUEL DE TUCUMAN","PROVINCIA":"Tucumán"},{"APIES":2917,"COORDENADA_X":-61.49409,"COORDENADA_Y":-31.25197,"OPERADOR":"OPESSA RAFAELA CENTRO","LOCALIDAD":"RAFAELA","PROVINCIA":"Santa Fe"},{"APIES":2744,"COORDENADA_X":-68.83912,"COORDENADA_Y":-32.89205,"OPERADOR":"OPESSA ACA MENDOZA","LOCALIDAD":"MENDOZA","PROVINCIA":"Mendoza"},{"APIES":1462,"COORDENADA_X":-62.2555,"COORDENADA_Y":-38.72047,"OPERADOR":"OPESSA BAHIA BLANCA BRANDSEN","LOCALIDAD":"BAHIA BLANCA","PROVINCIA":"Buenos Aires"},{"APIES":1956,"COORDENADA_X":-59.12654,"COORDENADA_Y":-37.33172,"OPERADOR":"OPESSA TANDIL","LOCALIDAD":"TANDIL","PROVINCIA":"Buenos Aires"},{"APIES":2848,"COORDENADA_X":-66.33495,"COORDENADA_Y":-33.29304,"OPERADOR":"OPESSA SAN LUIS","LOCALIDAD":"SAN LUIS","PROVINCIA":"San Luis"},{"APIES":2903,"COORDENADA_X":-58.25142,"COORDENADA_Y":-32.48745,"OPERADOR":"OPESSA ACA CONCEPCION DEL URUGUAY","LOCALIDAD":"CONCEPCION DEL URUGUAY","PROVINCIA":"Entre Ríos"},{"APIES":2499,"COORDENADA_X":-65.29476175,"COORDENADA_Y":-26.81330641,"OPERADOR":"OPESSA TUCUMAN YERBA BUENA","LOCALIDAD":"YERBA BUENA","PROVINCIA":"Tucumán"},{"APIES":3160,"COORDENADA_X":-58.42629,"COORDENADA_Y":-34.5963,"OPERADOR":"OPESSA PRINGLES CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3340,"COORDENADA_X":-58.46687,"COORDENADA_Y":-34.55017,"OPERADOR":"OPESSA AZURDUY CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3232,"COORDENADA_X":-58.275,"COORDENADA_Y":-34.71229,"OPERADOR":"OPESSA ACA BERNAL","LOCALIDAD":"BERNAL","PROVINCIA":"Buenos Aires"},{"APIES":7,"COORDENADA_X":-58.47089,"COORDENADA_Y":-34.54595,"OPERADOR":"OPESSA CABILDO CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":2916,"COORDENADA_X":-58.871,"COORDENADA_Y":-34.44562,"OPERADOR":"OPESSA PILAR MAGNOLIAS","LOCALIDAD":"PILAR","PROVINCIA":"Buenos Aires"},{"APIES":504,"COORDENADA_X":-57.96895,"COORDENADA_Y":-34.90079,"OPERADOR":"OPESSA LA PLATA 7 Y 32","LOCALIDAD":"LA PLATA","PROVINCIA":"Buenos Aires"},{"APIES":983,"COORDENADA_X":-60.66697,"COORDENADA_Y":-32.96364,"OPERADOR":"OPESSA ROSARIO OVIDIO LAGOS","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":1975,"COORDENADA_X":-65.29137,"COORDENADA_Y":-43.26342,"OPERADOR":"OPESSA TRELEW","LOCALIDAD":"TRELEW","PROVINCIA":"Chubut"},{"APIES":973,"COORDENADA_X":-60.65522,"COORDENADA_Y":-32.95017,"OPERADOR":"OPESSA ACA ROSARIO OROÑO","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":160,"COORDENADA_X":-58.52754,"COORDENADA_Y":-34.48164,"OPERADOR":"OPESSA SAN ISIDRO HIPODROMO","LOCALIDAD":"SAN ISIDRO","PROVINCIA":"Buenos Aires"},{"APIES":1910,"COORDENADA_X":-71.30973022,"COORDENADA_Y":-41.13463457,"OPERADOR":"OPESSA BARILOCHE CENTRO","LOCALIDAD":"SAN CARLOS DE BARILOCHE","PROVINCIA":"Río Negro"},{"APIES":2446,"COORDENADA_X":-65.19339428,"COORDENADA_Y":-26.83351697,"OPERADOR":"OPESSA TUCUMAN TERMINAL","LOCALIDAD":"SAN MIGUEL DE TUCUMAN","PROVINCIA":"Tucumán"},{"APIES":30943,"COORDENADA_X":-58.6428,"COORDENADA_Y":-34.4403,"OPERADOR":"OPESSA NORDELTA","LOCALIDAD":"TIGRE","PROVINCIA":"Buenos Aires"},{"APIES":1554,"COORDENADA_X":-67.49705,"COORDENADA_Y":-45.86542,"OPERADOR":"OPESSA ACA COMODORO RIVADAVIA","LOCALIDAD":"COMODORO RIVADAVIA","PROVINCIA":"Chubut"},{"APIES":1847,"COORDENADA_X":-56.8705,"COORDENADA_Y":-37.11009,"OPERADOR":"OPESSA ACA PINAMAR","LOCALIDAD":"PINAMAR","PROVINCIA":"Buenos Aires"},{"APIES":989,"COORDENADA_X":-60.64645,"COORDENADA_Y":-32.99045,"OPERADOR":"OPESSA ACA ROSARIO URIBURU","LOCALIDAD":"ROSARIO","PROVINCIA":"Santa Fe"},{"APIES":2918,"COORDENADA_X":-58.01639,"COORDENADA_Y":-31.39505,"OPERADOR":"OPESSA CONCORDIA CENTRO","LOCALIDAD":"CONCORDIA","PROVINCIA":"Entre Ríos"},{"APIES":1676,"COORDENADA_X":-60.9447,"COORDENADA_Y":-34.59405,"OPERADOR":"OPESSA ACA JUNIN","LOCALIDAD":"JUNIN","PROVINCIA":"Buenos Aires"},{"APIES":2694,"COORDENADA_X":-68.514,"COORDENADA_Y":-31.54137,"OPERADOR":"OPESSA ACA SAN JUAN","LOCALIDAD":"SAN JUAN","PROVINCIA":"San Juan"},{"APIES":1335,"COORDENADA_X":-58.98205,"COORDENADA_Y":-27.45464,"OPERADOR":"OPESSA ACA RESISTENCIA","LOCALIDAD":"RESISTENCIA","PROVINCIA":"Chaco"},{"APIES":2784,"COORDENADA_X":-68.33647,"COORDENADA_Y":-34.61425,"OPERADOR":"OPESSA ACA SAN RAFAEL","LOCALIDAD":"SAN RAFAEL","PROVINCIA":"Mendoza"},{"APIES":82,"COORDENADA_X":-58.44684,"COORDENADA_Y":-34.60805,"OPERADOR":"OPESSA ACA CABALLITO CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3088,"COORDENADA_X":-58.68642,"COORDENADA_Y":-34.64889,"OPERADOR":"OPESSA ITUZAINGO","LOCALIDAD":"ITUZAINGO","PROVINCIA":"Buenos Aires"},{"APIES":2,"COORDENADA_X":-58.3892,"COORDENADA_Y":-34.64512,"OPERADOR":"OPESSA ACA VELEZ SARSFIELD CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":84,"COORDENADA_X":-58.41337,"COORDENADA_Y":-34.61054,"OPERADOR":"OPESSA ACA ONCE CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":95,"COORDENADA_X":-58.4447,"COORDENADA_Y":-34.58487,"OPERADOR":"OPESSA DORREGO CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3228,"COORDENADA_X":-68.09025,"COORDENADA_Y":-38.95967,"OPERADOR":"OPESSA NEUQUEN","LOCALIDAD":"NEUQUEN","PROVINCIA":"Neuquén"},{"APIES":2039,"COORDENADA_X":-57.55295,"COORDENADA_Y":-37.96547,"OPERADOR":"OPESSA MAR DEL PLATA TEJEDOR","LOCALIDAD":"MAR DEL PLATA","PROVINCIA":"Buenos Aires"},{"APIES":1201,"COORDENADA_X":-58.1842,"COORDENADA_Y":-26.18812,"OPERADOR":"OPESSA FORMOSA","LOCALIDAD":"FORMOSA","PROVINCIA":"Formosa"},{"APIES":3330,"COORDENADA_X":-65.403,"COORDENADA_Y":-24.78025,"OPERADOR":"OPESSA SALTA","LOCALIDAD":"SALTA","PROVINCIA":"Salta"},{"APIES":3319,"COORDENADA_X":-62.25364,"COORDENADA_Y":-38.73009,"OPERADOR":"OPESSA BAHIA BLANCA PARCHAPPE","LOCALIDAD":"BAHIA BLANCA","PROVINCIA":"Buenos Aires"},{"APIES":1414,"COORDENADA_X":-58.6923,"COORDENADA_Y":-34.57289,"OPERADOR":"OPESSA BELLA VISTA","LOCALIDAD":"BELLA VISTA","PROVINCIA":"Buenos Aires"},{"APIES":1925,"COORDENADA_X":-71.34292,"COORDENADA_Y":-40.15462,"OPERADOR":"OPESSA SAN MARTIN DE LOS ANDES","LOCALIDAD":"SAN MARTIN DE LOS ANDES","PROVINCIA":"Neuquén"},{"APIES":1238,"COORDENADA_X":-68.79312,"COORDENADA_Y":-32.93247,"OPERADOR":"OPESSA MENDOZA MAIPU","LOCALIDAD":"MAIPU","PROVINCIA":"Mendoza"},{"APIES":3073,"COORDENADA_X":-58.47172,"COORDENADA_Y":-34.52537,"OPERADOR":"OPESSA MELO","LOCALIDAD":"VICENTE LOPEZ","PROVINCIA":"Buenos Aires"},{"APIES":2291,"COORDENADA_X":-65.23183685,"COORDENADA_Y":-26.82531492,"OPERADOR":"OPESSA TUCUMAN MATE DE LUNA MANO CENTRO","LOCALIDAD":"SAN MIGUEL DE TUCUMAN","PROVINCIA":"Tucumán"},{"APIES":523,"COORDENADA_X":-57.89605,"COORDENADA_Y":-34.87522,"OPERADOR":"OPESSA BERISSO REFINERIA","LOCALIDAD":"BERISSO","PROVINCIA":"Buenos Aires"},{"APIES":525,"COORDENADA_X":-57.92712,"COORDENADA_Y":-34.90692,"OPERADOR":"OPESSA BERISSO 122 Y 60","LOCALIDAD":"BERISSO","PROVINCIA":"Buenos Aires"},{"APIES":857,"COORDENADA_X":-60.28755,"COORDENADA_Y":-38.36092,"OPERADOR":"OPESSA TRES ARROYOS RN3","LOCALIDAD":"TRES ARROYOS","PROVINCIA":"Buenos Aires"},{"APIES":304,"COORDENADA_X":-58.63452627,"COORDENADA_Y":-34.4605749,"OPERADOR":"OPESSA GRAL. PACHECO","LOCALIDAD":"GENERAL PACHECO","PROVINCIA":"Buenos Aires"},{"APIES":2531,"COORDENADA_X":-68.79445,"COORDENADA_Y":-32.9037,"OPERADOR":"OPESSA MENDOZA SHOPPING","LOCALIDAD":"SAN JOSE","PROVINCIA":"Mendoza"},{"APIES":1727,"COORDENADA_X":-56.6898,"COORDENADA_Y":-36.72084,"OPERADOR":"OPESSA MAR DE AJO","LOCALIDAD":"MAR DE AJO","PROVINCIA":"Buenos Aires"},{"APIES":907,"COORDENADA_X":-59.65554,"COORDENADA_Y":-29.1435,"OPERADOR":"OPESSA ACA RECONQUISTA","LOCALIDAD":"RECONQUISTA","PROVINCIA":"Santa Fe"},{"APIES":2822,"COORDENADA_X":-68.73819664,"COORDENADA_Y":-32.92308382,"OPERADOR":"OPESSA MENDOZA RODEO DE LA CRUZ","LOCALIDAD":"GUAYMALLEN","PROVINCIA":"Mendoza"},{"APIES":2657,"COORDENADA_X":-68.5145,"COORDENADA_Y":-31.53605,"OPERADOR":"OPESSA SAN JUAN RIVADAVIA","LOCALIDAD":"SAN JUAN","PROVINCIA":"San Juan"},{"APIES":44,"COORDENADA_X":-58.45034,"COORDENADA_Y":-34.68075,"OPERADOR":"OPESSA ACA AUTODROMO CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":2782,"COORDENADA_X":-68.33492,"COORDENADA_Y":-34.62559,"OPERADOR":"OPESSA SAN RAFAEL SARMIENTO","LOCALIDAD":"SAN RAFAEL","PROVINCIA":"Mendoza"},{"APIES":31252,"COORDENADA_X":-68.8518731,"COORDENADA_Y":-32.9837738,"OPERADOR":"OPESSA MENDOZA CHACRAS","LOCALIDAD":"LUJAN DE CUYO","PROVINCIA":"Mendoza"},{"APIES":2011,"COORDENADA_X":-56.97187,"COORDENADA_Y":-37.24497,"OPERADOR":"OPESSA VILLA GESELL","LOCALIDAD":"VILLA GESELL","PROVINCIA":"Buenos Aires"},{"APIES":2102,"COORDENADA_X":-64.22604,"COORDENADA_Y":-31.36395,"OPERADOR":"OPESSA CORDOBA LA CORDILLERA","LOCALIDAD":"CORDOBA","PROVINCIA":"Córdoba"},{"APIES":3235,"COORDENADA_X":-64.28804,"COORDENADA_Y":-31.29942,"OPERADOR":"OPESSA ACA VILLA ALLENDE","LOCALIDAD":"VILLA ALLENDE","PROVINCIA":"Córdoba"},{"APIES":2907,"COORDENADA_X":-58.50692,"COORDENADA_Y":-34.57155,"OPERADOR":"OPESSA CONSTITUYENTES CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3048,"COORDENADA_X":-58.48484,"COORDENADA_Y":-34.6452,"OPERADOR":"OPESSA OLIVERA CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3105,"COORDENADA_X":-58.42904,"COORDENADA_Y":-34.6085,"OPERADOR":"OPESSA YATAY CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":3318,"COORDENADA_X":-58.4322,"COORDENADA_Y":-34.58312,"OPERADOR":"OPESSA NICARAGUA CABA","LOCALIDAD":"CIUDAD DE BUENOS AIRES","PROVINCIA":"CABA"},{"APIES":184,"COORDENADA_X":-58.51175,"COORDENADA_Y":-34.52389,"OPERADOR":"OPESSA UGARTE","LOCALIDAD":"MUNRO","PROVINCIA":"Buenos Aires"},{"APIES":2989,"COORDENADA_X":-61.46484,"COORDENADA_Y":-31.25759,"OPERADOR":"OPESSA RAFAELA RIO DE JANEIRO","LOCALIDAD":"RAFAELA","PROVINCIA":"Santa Fe"},{"APIES":2536,"COORDENADA_X":-58.50639,"COORDENADA_Y":-34.7117,"OPERADOR":"OPESSA RICCHIERI MANO EZEIZA","LOCALIDAD":"ALDO BONZI","PROVINCIA":"Buenos Aires"},{"APIES":2985,"COORDENADA_X":-58.52071741,"COORDENADA_Y":-34.51349633,"OPERADOR":"OPESSA DEBENEDETTI RN9","LOCALIDAD":"OLIVOS","PROVINCIA":"Buenos Aires"},{"APIES":3254,"COORDENADA_X":-58.93847,"COORDENADA_Y":-34.19905,"OPERADOR":"OPESSA CAMPANA KM72 MANO CABA","LOCALIDAD":"CAMPANA","PROVINCIA":"Buenos Aires"},{"APIES":1142,"COORDENADA_X":-58.7057,"COORDENADA_Y":-34.43964,"OPERADOR":"OPESSA GARIN RN9","LOCALIDAD":"TORTUGUITAS","PROVINCIA":"Buenos Aires"},{"APIES":1702,"COORDENADA_X":-59.08439471,"COORDENADA_Y":-36.02751772,"OPERADOR":"OPESSA LAS FLORES","LOCALIDAD":"LAS FLORES","PROVINCIA":"Buenos Aires"},{"APIES":977,"COORDENADA_X":-60.46054,"COORDENADA_Y":-33.22834,"OPERADOR":"OPESSA FIGHIERA RN9 MANO CABA","LOCALIDAD":"FIGHIERA","PROVINCIA":"Santa Fe"},{"APIES":3003,"COORDENADA_X":-58.72417,"COORDENADA_Y":-34.45654,"OPERADOR":"OPESSA PILAR RN8 MANO CABA","LOCALIDAD":"TORTUGUITAS","PROVINCIA":"Buenos Aires"},{"APIES":2987,"COORDENADA_X":-58.52234,"COORDENADA_Y":-34.51312,"OPERADOR":"OPESSA DEBENEDETTI MANO CABA","LOCALIDAD":"OLIVOS","PROVINCIA":"Buenos Aires"},{"APIES":3298,"COORDENADA_X":-58.30547,"COORDENADA_Y":-34.68495,"OPERADOR":"OPESSA AUBASA MANO LA PLATA","LOCALIDAD":"AVELLANEDA","PROVINCIA":"Buenos Aires"},{"APIES":1173,"COORDENADA_X":-59.8425,"COORDENADA_Y":-36.79459,"OPERADOR":"OPESSA ACA AZUL","LOCALIDAD":"AZUL","PROVINCIA":"Buenos Aires"},{"APIES":2992,"COORDENADA_X":-58.98255,"COORDENADA_Y":-34.58576,"OPERADOR":"OPESSA ACCESO OESTE RN7 MANO CABA","LOCALIDAD":"GENERAL RODRIGUEZ","PROVINCIA":"Buenos Aires"},{"APIES":2904,"COORDENADA_X":-59.04729,"COORDENADA_Y":-34.13489,"OPERADOR":"OPESSA ZARATE RN12","LOCALIDAD":"ZARATE","PROVINCIA":"Buenos Aires"},{"APIES":3329,"COORDENADA_X":-58.70625,"COORDENADA_Y":-34.43997,"OPERADOR":"OPESSA GARIN RN9 MANO CABA","LOCALIDAD":"TORTUGUITAS","PROVINCIA":"Buenos Aires"},{"APIES":2991,"COORDENADA_X":-58.98241,"COORDENADA_Y":-34.58522,"OPERADOR":"OPESSA ACCESO OESTE RN7 MANO LUJAN","LOCALIDAD":"GENERAL RODRIGUEZ","PROVINCIA":"Buenos Aires"},{"APIES":1088,"COORDENADA_X":-60.5077,"COORDENADA_Y":-31.74825,"OPERADOR":"OPESSA PARANA ALMAFUERTE","LOCALIDAD":"PARANA","PROVINCIA":"Entre Ríos"},{"APIES":3002,"COORDENADA_X":-58.6302,"COORDENADA_Y":-34.6533,"OPERADOR":"OPESSA ACA MORON","LOCALIDAD":"MORON","PROVINCIA":"Buenos Aires"},{"APIES":1105,"COORDENADA_X":-58.00604,"COORDENADA_Y":-31.29497,"OPERADOR":"OPESSA CONCORDIA TERMAS","LOCALIDAD":"CONCORDIA","PROVINCIA":"Entre Ríos"},{"APIES":2782,"COORDENADA_X":-68.33492,"COORDENADA_Y":-34.62559,"OPERADOR":"OPESSA SAN RAFAEL SARMIENTO","LOCALIDAD":"SAN RAFAEL","PROVINCIA":"Mendoza"}];
 
 // ── MAP ──
 const map=L.map("map",{zoomControl:false}).setView([-35,-63],5);
 L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"CartoDB/OSM",maxZoom:19}).addTo(map);
 L.control.zoom({position:"bottomright"}).addTo(map);
-routeLineLayer=L.layerGroup().addTo(map);
-radiiLayer=L.layerGroup().addTo(map);
-multiRouteLayer=L.layerGroup().addTo(map);
 
-function markerColor(row){
-  if(row.APIES===refApies)return"#00d4ff";
-  if(row.APIES===multiDepApies)return"#ff6b35";
-  if(row.distKm===null)return"#4d6880";
-  if(row.distKm<100)return"#10b981";
-  if(row.distKm<300)return"#f59e0b";
-  if(row.distKm<500)return"#ff6b35";
-  return"#ef4444";
-}
-function makeIcon(color,isRef,isMultiDep,isMulti,num){
-  const r=isRef||isMultiDep?11:8,sz=r*3;
-  const ring=(isRef||isMultiDep)?`<circle cx="${r*1.5}" cy="${r*1.5}" r="${r+4}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.4"/>`:"";
-  const txt=isMulti?`<text x="${r*1.5}" y="${r*1.5+4}" text-anchor="middle" fill="#000" font-family="Syne" font-size="${r*1.1}" font-weight="800">${num}</text>`:"";
-  const fc=isMulti?"#ff6b35":color;
-  return L.divIcon({html:`<svg xmlns="http://www.w3.org/2000/svg" width="${sz}" height="${sz}"><circle cx="${r*1.5}" cy="${r*1.5}" r="${r}" fill="${fc}" fill-opacity="0.92" stroke="#07090f" stroke-width="1.5"/>${ring}${txt}</svg>`,className:"",iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
+STATIONS.forEach(s=>{
+  L.circleMarker([s.COORDENADA_Y,s.COORDENADA_X],{radius:7,fillColor:"#4d6880",color:"#07090f",weight:1.5,fillOpacity:0.9})
+   .bindPopup(`<div class="pop-title">APIES ${s.APIES}</div><div class="pop-op">${s.OPERADOR}</div><div class="pop-row"><span class="pop-l">Ciudad</span><span class="pop-v">${s.LOCALIDAD}</span></div><div class="pop-row"><span class="pop-l">Provincia</span><span class="pop-v">${s.PROVINCIA}</span></div>`,{maxWidth:240})
+   .addTo(map);
+});
+
+function fitAll(){map.fitBounds(STATIONS.map(s=>[s.COORDENADA_Y,s.COORDENADA_X]),{padding:[20,20]});}
+
+// ── POPULATE SELECTS ──
+function populateSelects(){
+  const sorted=[...STATIONS].sort((a,b)=>a.APIES-b.APIES);
+  const opts='<option value="">— Seleccionar estación —</option>'+sorted.map(s=>`<option value="${s.APIES}">${s.APIES} · ${s.LOCALIDAD} — ${s.OPERADOR.replace('OPESSA ','')}</option>`).join('');
+  ['refSel','routeA','routeB','multiDepSel'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+  const provs=[...new Set(STATIONS.map(s=>s.PROVINCIA))].sort();
+  const psel=document.getElementById('filterProv');
+  if(psel)psel.innerHTML='<option value="all">Todas las provincias</option>'+provs.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
 
-function buildPopup(row){
-  const isRef=row.APIES===refApies,isMultiDep=row.APIES===multiDepApies;
-  const ref=STATIONS.find(s=>s.APIES===refApies);
-  const dt=isRef?"Punto base ref.":(row.distKm!=null?`${row.distKm.toFixed(1)} km`:"-");
-  const tm=isRef?"-":fmtTime(row.durSec);
-  const color=markerColor(row);
-  const gUrl=ref&&!isRef?`https://www.google.com/maps/dir/?api=1&origin=${ref.COORDENADA_Y},${ref.COORDENADA_X}&destination=${row.COORDENADA_Y},${row.COORDENADA_X}&travelmode=driving`:`https://www.google.com/maps/search/?api=1&query=${row.COORDENADA_Y},${row.COORDENADA_X}`;
-  const isSel=multiSelection.includes(row.APIES);
-  const labels=[];
-  if(isRef)labels.push('<span style="color:var(--cyan);font-weight:700">★ BASE REF</span>');
-  if(isMultiDep)labels.push('<span style="color:var(--orange);font-weight:700">▶ SALIDA</span>');
-  return`<div class="pop-title">APIES ${row.APIES} ${labels.join(" ")}</div><div class="pop-op">${row.OPERADOR}</div>
-<div class="pop-row"><span class="pop-l">Provincia</span><span class="pop-v">${row.PROVINCIA||"-"}</span></div>
-<div class="pop-row"><span class="pop-l">Ciudad</span><span class="pop-v">${row.LOCALIDAD}</span></div>
-<div class="pop-row"><span class="pop-l">Dist. desde ref.</span><span class="pop-v" style="color:${color};font-weight:700">${dt}</span></div>
-<div class="pop-row"><span class="pop-l">Tiempo</span><span class="pop-v" style="color:var(--purple)">${tm}</span></div>
-<div class="pop-actions">
-<button class="pop-btn" onclick="window.open('${gUrl}','_blank')">Google Maps</button>
-${!isRef?`<button class="pop-btn ghost" onclick="toggleMultiFromPopup(${row.APIES})">${isSel?"Quitar de ruta":"+ Agregar a ruta"}</button>`:""}
-</div>`;
+// ── STATION LIST ──
+function renderList(){
+  const sorted=[...STATIONS].sort((a,b)=>a.APIES-b.APIES);
+  document.getElementById('stationList').innerHTML=sorted.map(s=>`
+    <div class="sitem">
+      <div class="sitem-dot" style="background:#4d6880"></div>
+      <div class="sitem-main">
+        <div class="sitem-apies">APIES ${s.APIES}</div>
+        <div class="sitem-op">${s.OPERADOR.replace('OPESSA ','')}</div>
+        <div class="sitem-loc">${s.LOCALIDAD}, ${s.PROVINCIA}</div>
+      </div>
+      <div class="sitem-right"><div class="sitem-dist" style="color:var(--muted)">—</div></div>
+    </div>`).join('');
+  document.getElementById('sTot').textContent=sorted.length;
 }
-function toggleMultiFromPopup(apies){toggleMultiSelect(apies);const row=rows.find(r=>r.APIES===apies);if(markers[apies]&&row)markers[apies].setPopupContent(buildPopup(row));}
-function initMarkers(){Object.values(markers).forEach(m=>map.removeLayer(m));markers={};
-  rows.forEach(row=>{
-    const isRef=row.APIES===refApies,isMultiDep=row.APIES===multiDepApies;
-    const idx=multiSelection.indexOf(row.APIES),isMul=idx>=0;
-    const m=L.marker([row.COORDENADA_Y,row.COORDENADA_X],{icon:makeIcon(markerColor(row),isRef,isMultiDep,isMul,idx+1)}).bindPopup(()=>buildPopup(row),{maxWidth:280}).addTo(map);
-    m.on("click",()=>{selectedItem=row.APIES;renderList();});markers[row.APIES]=m;});
-}
-function refreshIcons(){rows.forEach(row=>{if(!markers[row.APIES])return;const isRef=row.APIES===refApies,isMultiDep=row.APIES===multiDepApies,idx=multiSelection.indexOf(row.APIES);markers[row.APIES].setIcon(makeIcon(markerColor(row),isRef,isMultiDep,idx>=0,idx+1));});applyMapFilter();}
 
-// Apply range filter to map markers — show/hide based on active tab's range
-function applyMapFilter(){
-  const activeTab=document.querySelector(".tab.active");
-  const tabIdx=activeTab?[...document.querySelectorAll(".tab")].indexOf(activeTab):0;
-  const mn=tabIdx===2?mRangeMin:rangeMin;
-  const mx=tabIdx===2?mRangeMax:rangeMax;
-  const isFiltered=mn>0||mx<3000;
-  rows.forEach(row=>{
-    const m=markers[row.APIES];if(!m)return;
-    const isRef=row.APIES===refApies,isMultiDep=row.APIES===multiDepApies;
-    // Always show ref and departure points
-    if(isRef||isMultiDep){if(!map.hasLayer(m))m.addTo(map);return;}
-    if(!isFiltered){if(!map.hasLayer(m))m.addTo(map);return;}
-    // Hide if out of range (only when distances are calculated)
-    if(row.distKm!=null){
-      const inRange=row.distKm>=mn&&row.distKm<=(mx>=3000?Infinity:mx);
-      if(inRange){if(!map.hasLayer(m))m.addTo(map);}
-      else{if(map.hasLayer(m))map.removeLayer(m);}
-    } else {
-      // No dist yet: show only if min=0
-      if(mn===0){if(!map.hasLayer(m))m.addTo(map);}
-      else{if(map.hasLayer(m))map.removeLayer(m);}
-    }
-  });
+// ── MULTI LIST ──
+function renderMultiList(){
+  const sorted=[...STATIONS].sort((a,b)=>a.APIES-b.APIES).slice(0,20);
+  document.getElementById('multiList').innerHTML=sorted.map(s=>`
+    <div class="mitem">
+      <div class="mitem-dot" style="background:#4d6880"></div>
+      <div class="mitem-body">
+        <div class="mitem-apies">APIES ${s.APIES}</div>
+        <div class="mitem-op">${s.OPERADOR.replace('OPESSA ','')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── TAB SWITCHING ──
+function switchTab(n){
+  document.querySelectorAll(".ribbon-tab").forEach((t,i)=>t.classList.toggle("active",i===n));
+  document.querySelectorAll(".mobile-tabs .tab").forEach((t,i)=>t.classList.toggle("active",i===n));
+  document.querySelectorAll(".tab-body").forEach((b,i)=>b.classList.toggle("active",i===n));
+  setTimeout(()=>map.invalidateSize(),50);
+  if(window.innerWidth<=768)document.getElementById("sidebar").classList.add("panel-open");
+}
+
+// ── MOBILE PANEL ──
+function toggleMobilePanel(){document.getElementById("sidebar").classList.toggle("panel-open");}
+
+// ── COLLAPSIBLE FILTERS ──
+function toggleFilters(){
+  const body=document.getElementById("filterBody");
+  const btn=document.getElementById("filterToggle");
+  const collapsed=body.classList.toggle("collapsed");
+  btn.textContent=collapsed?"▼ Mostrar":"▲ Ocultar";
+}
+
+// ── MOBILE DRAG ──
+function initMobileDrag(){
+  if(window.innerWidth>768)return;
+  const panel=document.getElementById("sidebar");
+  const handle=panel.querySelector(".panel-handle");
+  let startY=0,startTime=0,dragging=false,startIsOpen=false;
+  handle.addEventListener("touchstart",e=>{startY=e.touches[0].clientY;startTime=Date.now();dragging=false;startIsOpen=panel.classList.contains("panel-open");panel.style.transition="none";},{passive:true});
+  handle.addEventListener("touchmove",e=>{const dy=e.touches[0].clientY-startY;if(Math.abs(dy)>8)dragging=true;if(!dragging)return;const pH=panel.offsetHeight,base=startIsOpen?0:(pH-108);const ny=Math.max(0,Math.min(pH-38,base+dy));panel.style.transform=`translateY(${ny}px)`;},{passive:true});
+  handle.addEventListener("touchend",e=>{panel.style.transition="transform .32s cubic-bezier(.4,0,.2,1)";panel.style.transform="";const dy=e.changedTouches[0].clientY-startY;const vel=dy/(Date.now()-startTime);if(!dragging)panel.classList.toggle("panel-open");else if(vel>0.3||(dy>70&&vel>=0))panel.classList.remove("panel-open");else if(vel<-0.3||(dy<-70&&vel<=0))panel.classList.add("panel-open");},{passive:true});
 }
 
 // ── SEARCHABLE SELECT ──
 const _csInstances={};
 class SearchableSelect{
-  constructor(id,placeholder){
-    this.id=id;this.placeholder=placeholder||'Buscar...';
-    this.sel=document.getElementById(id);this.isOpen=false;
-    if(!this.sel)return;this._setup();_csInstances[id]=this;
-  }
-  _setup(){
-    const sel=this.sel;sel.style.display='none';
-    const mini=sel.className.includes('mini');
-    const wrap=document.createElement('div');
-    wrap.className='cs-wrap'+(mini?' cs-mini':'');
-    if(sel.style.flex)wrap.style.flex=sel.style.flex;
-    if(sel.style.width)wrap.style.width=sel.style.width;
-    sel.insertAdjacentElement('afterend',wrap);
-    const box=document.createElement('div');box.className='cs-box';
-    this.inp=document.createElement('input');this.inp.type='text';
-    this.inp.className='cs-input';this.inp.autocomplete='off';
-    this.inp.spellcheck=false;this.inp.placeholder=this.placeholder;
-    const caret=document.createElement('div');caret.className='cs-caret';
-    caret.innerHTML='<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
-    box.appendChild(this.inp);box.appendChild(caret);
-    this.list=document.createElement('div');this.list.className='cs-list';
-    wrap.appendChild(box);wrap.appendChild(this.list);
-    this.wrap=wrap;this._sync();this._bind();
-    new MutationObserver(()=>wrap.classList.toggle('cs-disabled',sel.disabled))
-      .observe(sel,{attributes:true,attributeFilter:['disabled']});
-  }
-  _sync(){
-    const o=Array.from(this.sel.options).find(o=>o.value===this.sel.value);
-    this.inp.value=o?o.text:'';
-  }
-  _render(q){
-    q=(q||'').toLowerCase().trim();
-    const opts=Array.from(this.sel.options);
-    const filtered=q?opts.filter(o=>o.text.toLowerCase().includes(q)):opts;
-    this.list.innerHTML=filtered.length
-      ?filtered.map(o=>`<div class="cs-item${o.value===this.sel.value?' cs-selected':''}" data-val="${o.value}">${o.text}</div>`).join('')
-      :'<div class="cs-empty">Sin resultados</div>';
-    const sel=this.list.querySelector('.cs-selected');
-    if(sel)setTimeout(()=>sel.scrollIntoView({block:'nearest'}),0);
-  }
-  _pos(){
-    const r=this.wrap.getBoundingClientRect();
-    this.list.style.left=r.left+'px';this.list.style.width=r.width+'px';
-    if(window.innerHeight-r.bottom<220&&r.top>220){
-      this.list.style.top='auto';this.list.style.bottom=(window.innerHeight-r.top+3)+'px';
-    }else{this.list.style.top=(r.bottom+3)+'px';this.list.style.bottom='auto';}
-  }
-  _open(){
-    if(this.sel.disabled)return;
-    this._pos();this._render('');this.inp.value='';
-    this.wrap.classList.add('cs-open');this.isOpen=true;
-  }
-  _close(restore){
-    this.wrap.classList.remove('cs-open');this.isOpen=false;
-    if(restore!==false)this._sync();
-  }
-  _pick(val){
-    this.sel.value=val;
-    this.sel.dispatchEvent(new Event('change',{bubbles:true}));
-    this._close(true);
-  }
-  _bind(){
-    this.inp.addEventListener('focus',()=>this._open());
-    this.inp.addEventListener('input',()=>this._render(this.inp.value));
-    this.inp.addEventListener('blur',()=>setTimeout(()=>{if(!this.isOpen||!this.list.matches(':hover'))this._close(true);},200));
-    this.list.addEventListener('mousedown',e=>{e.preventDefault();const it=e.target.closest('.cs-item');if(it)this._pick(it.dataset.val);});
-    this.list.addEventListener('touchstart',e=>{const it=e.target.closest('.cs-item');if(it){e.preventDefault();this._pick(it.dataset.val);}},{passive:false});
-    document.addEventListener('click',e=>{if(this.isOpen&&!this.wrap.contains(e.target)&&!this.list.contains(e.target))this._close(true);});
-    document.addEventListener('scroll',()=>{if(this.isOpen){this._pos();}},true);
-  }
+  constructor(id,placeholder){this.id=id;this.placeholder=placeholder||'Buscar...';this.sel=document.getElementById(id);this.isOpen=false;if(!this.sel)return;this._setup();_csInstances[id]=this;}
+  _setup(){const sel=this.sel;sel.style.display='none';const mini=sel.className.includes('mini');const wrap=document.createElement('div');wrap.className='cs-wrap'+(mini?' cs-mini':'');if(sel.style.flex)wrap.style.flex=sel.style.flex;if(sel.style.width)wrap.style.width=sel.style.width;sel.insertAdjacentElement('afterend',wrap);const box=document.createElement('div');box.className='cs-box';this.inp=document.createElement('input');this.inp.type='text';this.inp.className='cs-input';this.inp.autocomplete='off';this.inp.spellcheck=false;this.inp.placeholder=this.placeholder;const caret=document.createElement('div');caret.className='cs-caret';caret.innerHTML='<svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';box.appendChild(this.inp);box.appendChild(caret);this.list=document.createElement('div');this.list.className='cs-list';wrap.appendChild(box);wrap.appendChild(this.list);this.wrap=wrap;this._sync();this._bind();new MutationObserver(()=>wrap.classList.toggle('cs-disabled',sel.disabled)).observe(sel,{attributes:true,attributeFilter:['disabled']});}
+  _sync(){const o=Array.from(this.sel.options).find(o=>o.value===this.sel.value);this.inp.value=o?o.text:'';}
+  _render(q){q=(q||'').toLowerCase().trim();const opts=Array.from(this.sel.options);const filtered=q?opts.filter(o=>o.text.toLowerCase().includes(q)):opts;this.list.innerHTML=filtered.length?filtered.map(o=>`<div class="cs-item${o.value===this.sel.value?' cs-selected':''}" data-val="${o.value}">${o.text}</div>`).join(''):'<div class="cs-empty">Sin resultados</div>';const sel=this.list.querySelector('.cs-selected');if(sel)setTimeout(()=>sel.scrollIntoView({block:'nearest'}),0);}
+  _pos(){const r=this.wrap.getBoundingClientRect();this.list.style.left=r.left+'px';this.list.style.width=r.width+'px';if(window.innerHeight-r.bottom<220&&r.top>220){this.list.style.top='auto';this.list.style.bottom=(window.innerHeight-r.top+3)+'px';}else{this.list.style.top=(r.bottom+3)+'px';this.list.style.bottom='auto';}}
+  _open(){if(this.sel.disabled)return;this._pos();this._render('');this.inp.value='';this.wrap.classList.add('cs-open');this.isOpen=true;}
+  _close(restore){this.wrap.classList.remove('cs-open');this.isOpen=false;if(restore!==false)this._sync();}
+  _pick(val){this.sel.value=val;this.sel.dispatchEvent(new Event('change',{bubbles:true}));this._close(true);}
+  _bind(){this.inp.addEventListener('focus',()=>this._open());this.inp.addEventListener('input',()=>this._render(this.inp.value));this.inp.addEventListener('blur',()=>setTimeout(()=>{if(!this.isOpen||!this.list.matches(':hover'))this._close(true);},200));this.list.addEventListener('mousedown',e=>{e.preventDefault();const it=e.target.closest('.cs-item');if(it)this._pick(it.dataset.val);});this.list.addEventListener('touchstart',e=>{const it=e.target.closest('.cs-item');if(it){e.preventDefault();this._pick(it.dataset.val);}},{passive:false});document.addEventListener('click',e=>{if(this.isOpen&&!this.wrap.contains(e.target)&&!this.list.contains(e.target))this._close(true);});document.addEventListener('scroll',()=>{if(this.isOpen)this._pos();},true);}
   refresh(){this._sync();if(this.isOpen)this._render(this.inp.value);}
 }
 
-// ── MOBILE PANEL DRAG ──
-function initMobileDrag(){
-  if(window.innerWidth>768)return;
-  const panel=document.getElementById('panel');
-  const handle=panel.querySelector('.panel-handle');
-  let startY=0,startTime=0,dragging=false,startIsOpen=false;
-  handle.addEventListener('touchstart',e=>{
-    startY=e.touches[0].clientY;startTime=Date.now();dragging=false;
-    startIsOpen=panel.classList.contains('panel-open');
-    panel.style.transition='none';
-  },{passive:true});
-  handle.addEventListener('touchmove',e=>{
-    const dy=e.touches[0].clientY-startY;
-    if(Math.abs(dy)>8)dragging=true;
-    if(!dragging)return;
-    const pH=panel.offsetHeight;
-    const base=startIsOpen?0:(pH-132);
-    const ny=Math.max(0,Math.min(pH-38,base+dy));
-    panel.style.transform=`translateY(${ny}px)`;
-  },{passive:true});
-  handle.addEventListener('touchend',e=>{
-    panel.style.transition='transform .32s cubic-bezier(.4,0,.2,1)';
-    panel.style.transform='';
-    const dy=e.changedTouches[0].clientY-startY;
-    const vel=dy/(Date.now()-startTime);
-    if(!dragging){panel.classList.toggle('panel-open');}
-    else if(vel>0.3||(dy>70&&vel>=0)){panel.classList.remove('panel-open');}
-    else if(vel<-0.3||(dy<-70&&vel<=0)){panel.classList.add('panel-open');}
-  },{passive:true});
-}
+// ── TYPE CHIPS ──
+document.querySelectorAll('.ttype-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{chip.closest('.type-filter-row').querySelectorAll('.ttype-chip').forEach(c=>c.classList.remove('on'));chip.classList.add('on');});
+});
+document.querySelectorAll('.filter-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{chip.closest('.filter-chip-row').querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on'));chip.classList.add('on');});
+});
 
 // ── INIT ──
-(function init(){
-  const sorted=[...STATIONS].sort((a,b)=>a.APIES-b.APIES);
-  ["refSel","routeA","routeB","multiDepSel"].forEach(id=>{
-    const sel=document.getElementById(id);
-    if(id!=="refSel"){const o=document.createElement("option");o.value="";o.textContent="-- Selecciona APIES --";sel.appendChild(o);}
-    sorted.forEach(s=>{const o=document.createElement("option");o.value=s.APIES;o.textContent=`${s.APIES} - ${s.OPERADOR} (${s.LOCALIDAD})`;sel.appendChild(o);});
-  });
-  // Province filter
-  const provs=["all",...[...new Set(STATIONS.map(s=>s.PROVINCIA||"Otra"))].sort()];
-  const psel=document.getElementById("filterProv");
-  provs.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p==="all"?"Todas las provincias":p;psel.appendChild(o);});
-  document.getElementById("refSel").value="973";
-  onRefChange(false);initMarkers();renderList();renderMultiList();
-  // Searchable selects
-  new SearchableSelect("refSel","Buscar estación...");
-  new SearchableSelect("routeA","Buscar origen...");
-  new SearchableSelect("routeB","Buscar destino...");
-  new SearchableSelect("multiDepSel","Buscar punto de partida...");
-  new SearchableSelect("filterProv","Todas las provincias");
-  new SearchableSelect("sortSel");
-  _csInstances["refSel"]?.refresh();
-  initMobileDrag();
-})();
-
-function onRefChange(doReset=true){
-  const v=document.getElementById("refSel").value;
-  if(!v){refApies=null;document.getElementById("refInfo").style.display="none";document.getElementById("btnCalc").disabled=true;return;}
-  refApies=parseInt(v);const ref=STATIONS.find(s=>s.APIES===refApies);
-  const ri=document.getElementById("refInfo");ri.style.display="block";
-  ri.innerHTML=`<strong>${ref.OPERADOR}</strong> &nbsp;·&nbsp; ${ref.LOCALIDAD}, ${ref.PROVINCIA||""}`;
-  document.getElementById("btnCalc").disabled=false;
-  if(doReset)resetCalc();else initMarkers();
-}
-
-function onMultiDepChange(){
-  const v=document.getElementById("multiDepSel").value;
-  multiDepApies=v?parseInt(v):null;
-  const di=document.getElementById("multiDepInfo");
-  if(multiDepApies){
-    const dep=STATIONS.find(s=>s.APIES===multiDepApies);
-    di.style.display="block";
-    di.innerHTML=`<strong>${dep.OPERADOR}</strong> &nbsp;·&nbsp; ${dep.LOCALIDAD}, ${dep.PROVINCIA||""}`;
-  } else {di.style.display="none";}
-  refreshIcons();updateMultiSummary();
-  multiRouteLayer.clearLayers();
-}
-
-// ── STATION TYPE HELPERS ──
-function stationType(row){
-  const o=(row.OPERADOR||'').toUpperCase();
-  const d=(row.DIRECCION||'').toUpperCase();
-  if(o.includes('FULL'))return'full';
-  if(o.includes('MOVIL'))return'mobile';
-  if(o.includes('ACA'))return'aca';
-  if(d.includes('AUTOPISTA')||d.includes('RUTA NACIONAL')||d.includes('RUTA PROVINCIAL')||d.includes('RUTA '))return'highway';
-  return'urban';
-}
-function stypeLabel(row){const t=stationType(row);if(t==='full')return'FULL';if(t==='aca')return'ACA';if(t==='mobile')return'MÓVIL';return '';}
-function setTypeFilter(el,val){document.querySelectorAll('#typeFilterRow .ttype-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');typeFilter=val;renderList();}
-
-// ── MOBILE PANEL ──
-function toggleMobilePanel(){document.getElementById('panel').classList.toggle('panel-open');}
-
-function switchTab(i){
-  document.querySelectorAll(".tab").forEach((t,j)=>t.classList.toggle("active",i===j));
-  document.querySelectorAll(".tab-body").forEach((b,j)=>b.classList.toggle("active",i===j));
-  applyMapFilter();
-  if(window.innerWidth<=768)document.getElementById('panel').classList.add('panel-open');
-}
-
-// ── RANGE SLIDERS ──
-function onRangeChange(tab){
-  const prefix=tab==="tab2"?"m":"";
-  let mn=parseInt(document.getElementById(prefix+"rangeMin").value);
-  let mx=parseInt(document.getElementById(prefix+"rangeMax").value);
-  const GAP=50;
-  if(mn>mx-GAP){
-    if(event.target.id===prefix+"rangeMin")mn=mx-GAP;
-    else mx=mn+GAP;
-    document.getElementById(prefix+"rangeMin").value=mn;
-    document.getElementById(prefix+"rangeMax").value=mx;
-  }
-  const maxVal=parseInt(document.getElementById(prefix+"rangeMax").max)||3000;
-  document.getElementById(prefix+"rangeMinLbl").textContent=mn;
-  document.getElementById(prefix+"rangeMaxLbl").textContent=mx>=maxVal?"Max":mx;
-  const fill=document.getElementById(prefix+"rangeFill");
-  fill.style.left=(mn/maxVal*100)+"%";fill.style.width=((mx-mn)/maxVal*100)+"%";
-  if(tab==="tab2"){mRangeMin=mn;mRangeMax=mx;renderMultiList();}
-  else{rangeMin=mn;rangeMax=mx;renderList();}
-  applyMapFilter();
-}
-
-// ── ROUTING ──
-function haversine(lon1,lat1,lon2,lat2){const R=6371,r=Math.PI/180,dLat=(lat2-lat1)*r,dLon=(lon2-lon1)*r;return R*2*Math.asin(Math.sqrt(Math.sin(dLat/2)**2+Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLon/2)**2));}
-const OSRM=["https://router.project-osrm.org","https://routing.openstreetmap.de/routed-car"];
-async function fetchRoute(lon1,lat1,lon2,lat2,geom=false){
-  for(const base of OSRM){try{
-    const url=`${base}/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=${geom?"full":"false"}${geom?"&geometries=geojson":""}`;
-    const r=await fetch(url,{signal:AbortSignal.timeout(10000)});
-    if(!r.ok)continue;const d=await r.json();
-    if(d.code==="Ok"&&d.routes?.length)return{distM:d.routes[0].distance,durS:d.routes[0].duration,geometry:d.routes[0].geometry||null};
-  }catch(e){}}return null;
-}
-async function calcRowRoute(row,ref){
-  const res=await fetchRoute(ref.COORDENADA_X,ref.COORDENADA_Y,row.COORDENADA_X,row.COORDENADA_Y);
-  if(res){row.distKm=res.distM/1000;row.durSec=res.durS;row.method="route";}
-  else{const c=haversine(ref.COORDENADA_X,ref.COORDENADA_Y,row.COORDENADA_X,row.COORDENADA_Y);row.distKm=c*1.35;row.durSec=(row.distKm/80)*3600;row.method="linear";}
-  row.status="done";
-}
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-
-// ── CALC ──
-async function startCalc(){
-  if(running||!refApies)return;running=true;stopFlag=false;
-  document.getElementById("btnCalc").disabled=true;document.getElementById("btnStop").disabled=false;
-  document.getElementById("btnReset").disabled=true;document.getElementById("refSel").disabled=true;
-  document.getElementById("prog").classList.add("on");
-  const ref=STATIONS.find(s=>s.APIES===refApies);
-  const refRow=rows.find(r=>r.APIES===refApies);
-  if(refRow){refRow.status="ref";refRow.distKm=0;refRow.durSec=0;refRow.method="ref";}
-  const testTarget=STATIONS.find(s=>s.APIES!==refApies);
-  const testOk=await fetchRoute(ref.COORDENADA_X,ref.COORDENADA_Y,testTarget.COORDENADA_X,testTarget.COORDENADA_Y);
-  const pending=rows.filter(r=>r.APIES!==refApies&&r.status==="pending");
-  const total=pending.length;let done=0;
-  for(const row of pending){
-    if(stopFlag)break;row.status="loading";
-    document.getElementById("progCnt").textContent=`${done}/${total}`;
-    document.getElementById("progFill").style.width=`${(done/total*100).toFixed(1)}%`;
-    document.getElementById("progMsg").textContent=`APIES ${row.APIES} - ${row.LOCALIDAD}`;
-    await calcRowRoute(row,ref);done++;
-    if(row.distKm>maxDist)maxDist=row.distKm;
-    const actualMax=Math.ceil(maxDist/100)*100+100;
-    ["rangeMax","mRangeMax"].forEach(id=>{
-      const el=document.getElementById(id);
-      if(parseInt(el.value)>=parseInt(el.max)-50){el.max=actualMax;el.value=actualMax;}
-      document.getElementById(el.id.replace("rangeMax","rangeMax").replace("m","m")+"").max=actualMax;
-    });
-    document.getElementById("rangeMin").max=actualMax;document.getElementById("mRangeMin").max=actualMax;
-    refreshIcons();updateStats();renderList();renderMultiList();
-    await sleep(testOk?150:5);
-  }
-  running=false;stopFlag=false;
-  document.getElementById("btnCalc").disabled=false;document.getElementById("btnStop").disabled=true;
-  document.getElementById("btnReset").disabled=false;document.getElementById("refSel").disabled=false;
-  const actualMax=Math.ceil(maxDist/100)*100+100;
-  ["rangeMin","rangeMax","mRangeMin","mRangeMax"].forEach(id=>document.getElementById(id).max=actualMax);
-  document.getElementById("rangeMax").value=actualMax;document.getElementById("mRangeMax").value=actualMax;
-  rangeMax=actualMax;mRangeMax=actualMax;
-  document.getElementById("rangeMaxLbl").textContent="Max";document.getElementById("mRangeMaxLbl").textContent="Max";
-  document.getElementById("rangeFill").style.width="100%";document.getElementById("mRangeFill").style.width="100%";
-  const n=rows.filter(r=>r.status==="done").length;
-  if(n>0){document.getElementById("btnXlsx").disabled=false;document.getElementById("btnCsv").disabled=false;}
-  toast(`Completado: ${n} estaciones calculadas`);
-}
-function stopCalc(){stopFlag=true;document.getElementById("btnStop").disabled=true;}
-function resetCalc(){
-  if(running)return;
-  rows=STATIONS.map(s=>({...s,distKm:null,durSec:null,method:null,status:"pending"}));
-  maxDist=0;routeLineLayer.clearLayers();radiiLayer.clearLayers();multiRouteLayer.clearLayers();
-  multiSelection=[];showRadii=false;document.getElementById("btnCircles").classList.remove("active");
-  ["rangeMin","mRangeMin"].forEach(id=>{document.getElementById(id).value=0;});
-  ["rangeMax","mRangeMax"].forEach(id=>{document.getElementById(id).value=3000;document.getElementById(id).max=3000;});
-  rangeMin=0;rangeMax=3000;mRangeMin=0;mRangeMax=3000;
-  ["rangeMinLbl","mRangeMinLbl"].forEach(id=>document.getElementById(id).textContent="0");
-  ["rangeMaxLbl","mRangeMaxLbl"].forEach(id=>document.getElementById(id).textContent="Max");
-  ["rangeFill","mRangeFill"].forEach(id=>{document.getElementById(id).style.left="0%";document.getElementById(id).style.width="100%";});
-  ["btnXlsx","btnCsv"].forEach(id=>document.getElementById(id).disabled=true);
-  document.getElementById("prog").classList.remove("on");
-  initMarkers();updateStats();renderList();renderMultiList();updateMultiSummary();
-}
-
-// ── STATS + FORMAT ──
-function fmtTime(s){if(s==null)return"-";const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h>0?`${h}h ${String(m).padStart(2,"0")}m`:`${m}m`;}
-function fmtTimeL(s){if(s==null)return"-";const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h>0?`${h}h ${String(m).padStart(2,"0")}min`:`${m} min`;}
-function updateStats(){
-  const done=rows.filter(r=>r.status==="done"&&r.distKm>0);
-  document.getElementById("sDone").textContent=done.length;if(!done.length)return;
-  const d=done.map(r=>r.distKm);maxDist=Math.max(...d);
-  document.getElementById("sMax").textContent=Math.max(...d).toFixed(0)+" km";
-  document.getElementById("sAvg").textContent=(d.reduce((a,b)=>a+b,0)/d.length).toFixed(0)+" km";
-}
-
-// ── LIST (TAB 0) ──
-function dotColor(row){if(row.APIES===refApies)return"var(--cyan)";if(row.distKm===null)return"var(--muted)";if(row.distKm<100)return"var(--green)";if(row.distKm<300)return"var(--yellow)";if(row.distKm<500)return"var(--orange)";return"var(--red)";}
-function renderList(){
-  const q=document.getElementById("searchBox").value.toLowerCase();
-  const sort=document.getElementById("sortSel").value;
-  const prov=document.getElementById("filterProv").value;
-  const mn=rangeMin,mx=rangeMax;
-  let data=[...rows];
-  if(q)data=data.filter(r=>String(r.APIES).includes(q)||r.OPERADOR.toLowerCase().includes(q)||r.LOCALIDAD.toLowerCase().includes(q));
-  if(prov!=="all")data=data.filter(r=>r.APIES===refApies||(r.PROVINCIA||"")==prov);
-  if(typeFilter!=='all')data=data.filter(r=>r.APIES===refApies||stationType(r)===typeFilter);
-  data=data.filter(r=>{if(r.APIES===refApies)return true;if(r.distKm===null)return mn===0;return r.distKm>=mn&&r.distKm<=(mx>=3000?Infinity:mx);});
-  if(sort==="dist")data.sort((a,b)=>(a.distKm??Infinity)-(b.distKm??Infinity));
-  else if(sort==="dist_d")data.sort((a,b)=>(b.distKm??-Infinity)-(a.distKm??-Infinity));
-  else if(sort==="loc")data.sort((a,b)=>a.LOCALIDAD.localeCompare(b.LOCALIDAD));
-  else data.sort((a,b)=>a.APIES-b.APIES);
-  const el=document.getElementById("stationList");
-  el.innerHTML=data.map(row=>{
-    const isRef=row.APIES===refApies,isSel=row.APIES===selectedItem;
-    let dTxt="",tTxt="";
-    if(isRef)dTxt=`<span style="color:var(--cyan);font-family:Syne,sans-serif;font-weight:700;font-size:11px">BASE</span>`;
-    else if(row.status==="loading")dTxt=`<span style="color:var(--muted);font-size:10px;animation:blink 1.2s infinite">calc...</span>`;
-    else if(row.distKm!=null){dTxt=`<div class="sitem-dist" style="color:${dotColor(row)}">${row.distKm.toFixed(1)} km</div>`;tTxt=`<div class="sitem-time">${fmtTime(row.durSec)}</div>`;}
-    else dTxt=`<span style="color:var(--muted);font-size:10px">-</span>`;
-    return`<div class="sitem${isRef?" is-ref":""}${isSel?" active":""}" onclick="onListClick(${row.APIES})">
-<div class="sitem-dot" style="background:${dotColor(row)}"></div>
-<div class="sitem-main"><div class="sitem-apies${isRef?" rc":""}">${row.APIES}${isRef?" *":""}</div><div class="sitem-op">${row.OPERADOR}</div><div class="sitem-loc">${row.LOCALIDAD} · ${row.PROVINCIA||""}</div>${stypeLabel(row)?`<div class="stype-badge stype-${stationType(row)}">${stypeLabel(row)}</div>`:''}</div>
-<div class="sitem-right">${dTxt}${tTxt}</div></div>`;
-  }).join("")||`<div style="text-align:center;color:var(--muted);padding:22px;font-size:11px;">Sin resultados para este filtro</div>`;
-}
-function onListClick(apies){selectedItem=apies;renderList();const row=rows.find(r=>r.APIES===apies);if(!row)return;map.flyTo([row.COORDENADA_Y,row.COORDENADA_X],12,{duration:1});setTimeout(()=>markers[apies]?.openPopup(),1100);}
-
-// ── RADIOS ──
-function toggleRoadRadii(){
-  showRadii=!showRadii;document.getElementById("btnCircles").classList.toggle("active",showRadii);radiiLayer.clearLayers();
-  if(!showRadii||!refApies)return;
-  const doneRows=rows.filter(r=>r.status==="done"&&r.distKm>0&&r.APIES!==refApies);
-  if(!doneRows.length){toast("Calcula las distancias primero");showRadii=false;document.getElementById("btnCircles").classList.remove("active");return;}
-  const ref=STATIONS.find(s=>s.APIES===refApies);
-  [{min:0,max:100,c:"#10b981"},{min:100,max:300,c:"#f59e0b"},{min:300,max:500,c:"#ff6b35"},{min:500,max:99999,c:"#ef4444"}].forEach(band=>{
-    doneRows.filter(r=>r.distKm>=band.min&&r.distKm<band.max).forEach(row=>{
-      L.circleMarker([row.COORDENADA_Y,row.COORDENADA_X],{radius:11,color:band.c,weight:2,fill:true,fillColor:band.c,fillOpacity:.18}).addTo(radiiLayer);});
-  });
-  [100,300,500].forEach((km,i)=>{
-    const colors=["#10b981","#f59e0b","#ff6b35"];
-    L.circle([ref.COORDENADA_Y,ref.COORDENADA_X],{radius:km*780,color:colors[i],weight:1,fill:true,fillColor:colors[i],fillOpacity:.03,dashArray:"4,8"}).bindTooltip(`~${km} km`,{permanent:false}).addTo(radiiLayer);
-  });
-  toast("Radios por carretera activados");
-}
-function fitAll(){map.fitBounds(L.latLngBounds(rows.map(r=>[r.COORDENADA_Y,r.COORDENADA_X])),{padding:[30,30]});}
-
-// ── RUTA A-B ──
-function onRouteChange(){const a=document.getElementById("routeA").value,b=document.getElementById("routeB").value;document.getElementById("btnRouteAB").disabled=!a||!b||a===b;}
-async function calcRouteAB(){
-  const aId=parseInt(document.getElementById("routeA").value),bId=parseInt(document.getElementById("routeB").value);
-  const stA=STATIONS.find(s=>s.APIES===aId),stB=STATIONS.find(s=>s.APIES===bId);if(!stA||!stB)return;
-  document.getElementById("routeResult").innerHTML=`<div class="empty-msg" style="color:var(--cyan)">Calculando ruta...</div>`;
-  routeLineLayer.clearLayers();
-  const res=await fetchRoute(stA.COORDENADA_X,stA.COORDENADA_Y,stB.COORDENADA_X,stB.COORDENADA_Y,true);
-  let distKm,durSec,method;
-  if(res){distKm=res.distM/1000;durSec=res.durS;method="Ruta real (OSRM)";
-    if(res.geometry){const coords=res.geometry.coordinates.map(c=>[c[1],c[0]]);L.polyline(coords,{color:"#00d4ff",weight:3.5,opacity:.85}).addTo(routeLineLayer);map.fitBounds(L.latLngBounds(coords),{padding:[50,80]});}
-  }else{const c=haversine(stA.COORDENADA_X,stA.COORDENADA_Y,stB.COORDENADA_X,stB.COORDENADA_Y);distKm=c*1.35;durSec=(distKm/80)*3600;method="Distancia estimada (lineal x1.35)";
-    L.polyline([[stA.COORDENADA_Y,stA.COORDENADA_X],[stB.COORDENADA_Y,stB.COORDENADA_X]],{color:"#f59e0b",weight:2,dashArray:"7,5",opacity:.75}).addTo(routeLineLayer);
-    map.fitBounds(L.latLngBounds([[stA.COORDENADA_Y,stA.COORDENADA_X],[stB.COORDENADA_Y,stB.COORDENADA_X]]),{padding:[60,80]});
-  }
-  const gmaps=`https://www.google.com/maps/dir/?api=1&origin=${stA.COORDENADA_Y},${stA.COORDENADA_X}&destination=${stB.COORDENADA_Y},${stB.COORDENADA_X}&travelmode=driving`;
-  document.getElementById("routeResult").innerHTML=`<div class="route-card">
-<div class="rcard-head">Resultado</div>
-<div class="rstat"><span class="rstat-l">Origen</span><span class="rstat-v" style="font-size:11px;color:var(--cyan)">${stA.OPERADOR}<br><small style="color:var(--muted)">${stA.LOCALIDAD}</small></span></div>
-<div class="rstat"><span class="rstat-l">Destino</span><span class="rstat-v" style="font-size:11px;color:var(--red)">${stB.OPERADOR}<br><small style="color:var(--muted)">${stB.LOCALIDAD}</small></span></div>
-<div class="rstat"><span class="rstat-l">Distancia</span><span class="rstat-v" style="color:var(--cyan)">${distKm.toFixed(1)} km</span></div>
-<div class="rstat"><span class="rstat-l">Tiempo est.</span><span class="rstat-v" style="color:var(--purple)">${fmtTimeL(durSec)}</span></div>
-<div class="rstat"><span class="rstat-l">Metodo</span><span class="rstat-v" style="font-size:10px;color:var(--muted)">${method}</span></div>
-</div>
-<a href="${gmaps}" target="_blank" style="display:block;margin-top:12px;text-align:center;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:6px;padding:10px;color:var(--cyan);font-family:Syne,sans-serif;font-weight:700;font-size:11px;text-decoration:none;">Abrir en Google Maps</a>`;
-}
-
-// ── MULTI-PARADA ──
-function getDepStation(){return multiDepApies?STATIONS.find(s=>s.APIES===multiDepApies):(refApies?STATIONS.find(s=>s.APIES===refApies):null);}
-
-function setMultiFilter(el,val){document.querySelectorAll(".filter-chip").forEach(c=>c.classList.remove("on"));el.classList.add("on");multiDistFilter=val;renderMultiList();}
-function getMultiVisible(){
-  const q=document.getElementById("multiSearch").value.toLowerCase();
-  const dep=getDepStation();
-  let data=rows.filter(r=>r.APIES!==refApies&&r.APIES!==(multiDepApies||refApies));
-  // Filter by chip
-  if(multiDistFilter!=="all"){const km=parseInt(multiDistFilter);data=data.filter(r=>r.distKm===null||r.distKm<km);}
-  // Filter by range slider
-  const mn=mRangeMin,mx=mRangeMax;
-  data=data.filter(r=>{if(r.distKm===null)return mn===0;return r.distKm>=mn&&r.distKm<=(mx>=3000?Infinity:mx);});
-  if(q)data=data.filter(r=>String(r.APIES).includes(q)||r.OPERADOR.toLowerCase().includes(q)||r.LOCALIDAD.toLowerCase().includes(q));
-  return data.sort((a,b)=>(a.distKm??Infinity)-(b.distKm??Infinity));
-}
-
-function renderMultiList(){
-  const data=getMultiVisible();
-  const dep=getDepStation();
-  document.getElementById("multiList").innerHTML=data.map(row=>{
-    const idx=multiSelection.indexOf(row.APIES),isSel=idx>=0,dc=dotColor(row);
-    // Show dist from reference base (already calculated)
-    const dtRef=row.distKm!=null?`${row.distKm.toFixed(0)} km`:"-";
-    const tmRef=row.distKm!=null?fmtTime(row.durSec):"";
-    return`<div class="mitem${isSel?" selected":""}" onclick="toggleMultiSelect(${row.APIES})">
-<div class="mitem-num">${isSel?idx+1:""}</div>
-<div class="mitem-dot" style="background:${dc}"></div>
-<div class="mitem-body"><div class="mitem-apies">${row.APIES}</div><div class="mitem-op">${row.OPERADOR} · ${row.LOCALIDAD}</div></div>
-<div class="mitem-dists"><span style="color:${dc};font-family:Syne,sans-serif;font-weight:700;">${dtRef}</span><br><span style="color:var(--purple);font-size:9px">${tmRef}</span></div>
-</div>`;
-  }).join("");
-  document.getElementById("multiCount").textContent=`${multiSelection.length} seleccionadas`;
-  document.getElementById("btnOptimize").disabled=multiSelection.length<3;
-  const hasSel=multiSelection.length>=2;
-  document.getElementById("btnShowRoute").disabled=!hasSel||!getDepStation();
-  document.getElementById("btnGmapsMulti").disabled=!hasSel||!getDepStation();
-  document.getElementById("btnExportPDF").disabled=!hasSel||!getDepStation();
-  updateMultiSummary();
-}
-
-function toggleMultiSelect(apies){const idx=multiSelection.indexOf(apies);if(idx>=0)multiSelection.splice(idx,1);else multiSelection.push(apies);refreshIcons();renderMultiList();}
-function clearMultiSelection(){multiSelection=[];multiRouteLayer.clearLayers();refreshIcons();renderMultiList();}
-function selectAllVisible(){const vis=getMultiVisible().map(r=>r.APIES);vis.forEach(a=>{if(!multiSelection.includes(a))multiSelection.push(a);});refreshIcons();renderMultiList();}
-
-// Optimizar: usa distancias por carretera reales cuando disponibles
-function optimizeOrder(){
-  if(multiSelection.length<3)return;
-  const dep=getDepStation();if(!dep)return;
-  const toVisit=[...multiSelection];const ordered=[];let prevCoords={x:dep.COORDENADA_X,y:dep.COORDENADA_Y};let prevApies=dep.APIES===refApies?null:dep.APIES;
-  function distTo(toApies){
-    const rowTo=rows.find(r=>r.APIES===toApies);
-    // From ref to any: use road dist if available
-    if((prevApies===null||prevApies===refApies)&&rowTo?.distKm!=null&&rowTo.method==="route")return rowTo.distKm;
-    const pTo=STATIONS.find(s=>s.APIES===toApies);
-    return haversine(prevCoords.x,prevCoords.y,pTo.COORDENADA_X,pTo.COORDENADA_Y)*1.35;
-  }
-  while(toVisit.length>0){
-    let best=null,bestDist=Infinity,bestIdx=-1;
-    toVisit.forEach((a,i)=>{const d=distTo(a);if(d<bestDist){bestDist=d;best=a;bestIdx=i;}});
-    const chosen=toVisit.splice(bestIdx,1)[0];
-    ordered.push(chosen);
-    const chSt=STATIONS.find(s=>s.APIES===chosen);
-    prevCoords={x:chSt.COORDENADA_X,y:chSt.COORDENADA_Y};prevApies=chosen;
-  }
-  multiSelection=ordered;refreshIcons();renderMultiList();
-  toast("Orden optimizado usando distancias por carretera");
-}
-
-function updateMultiSummary(){
-  const el=document.getElementById("routeSummary");if(multiSelection.length<2){el.classList.remove("on");return;}
-  el.classList.add("on");
-  const dep=getDepStation();
-  document.getElementById("rDep").textContent=dep?`APIES ${dep.APIES} - ${dep.LOCALIDAD}`:"(sin definir)";
-  document.getElementById("rStops").textContent=multiSelection.length;
-  let totalDist=0,totalTime=0,usedRoad=0,usedLinear=0;
-  let prevCoords=dep?{x:dep.COORDENADA_X,y:dep.COORDENADA_Y}:{x:0,y:0};
-  const depIsRef=!multiDepApies||multiDepApies===refApies;
-  multiSelection.forEach((a,i)=>{
-    const s=STATIONS.find(x=>x.APIES===a);
-    const row=rows.find(r=>r.APIES===a);
-    let d,t;
-    if(depIsRef&&i===0&&row?.distKm!=null&&row.method==="route"){d=row.distKm;t=row.durSec||0;usedRoad++;}
-    else{d=haversine(prevCoords.x,prevCoords.y,s.COORDENADA_X,s.COORDENADA_Y)*1.35;t=(d/80)*3600;usedLinear++;}
-    totalDist+=d;totalTime+=t;prevCoords={x:s.COORDENADA_X,y:s.COORDENADA_Y};
-  });
-  document.getElementById("rTotalDist").textContent=totalDist.toFixed(0)+" km";
-  document.getElementById("rTotalTime").textContent=fmtTimeL(totalTime);
-  const note=usedRoad>0?`${usedRoad} tramo(s) con ruta real, ${usedLinear} estimados`:"Tramos estimados (calcula distancias primero para mayor precision)";
-  document.getElementById("rMethodNote").textContent=note;
-}
-
-// Ver ruta por carretera real en mapa (OSRM multi-waypoint)
-async function showMultiRoute(){
-  if(multiSelection.length<2)return;
-  const dep=getDepStation();if(!dep){toast("Selecciona un punto de partida");return;}
-  multiRouteLayer.clearLayers();
-  const overlay=document.getElementById("routeProgOverlay");
-  overlay.classList.add("on");
-  const points=[dep,...multiSelection.map(a=>STATIONS.find(s=>s.APIES===a))];
-  let totalDist=0,totalTime=0,allCoords=[],roadUsed=0;
-  // Fetch each leg sequentially
-  for(let i=0;i<points.length-1;i++){
-    const from=points[i],to=points[i+1];
-    overlay.textContent=`Calculando tramo ${i+1}/${points.length-1}: ${from.LOCALIDAD} → ${to.LOCALIDAD}`;
-    const res=await fetchRoute(from.COORDENADA_X,from.COORDENADA_Y,to.COORDENADA_X,to.COORDENADA_Y,true);
-    if(res){
-      totalDist+=res.distM/1000;totalTime+=res.durS;roadUsed++;
-      if(res.geometry){
-        const coords=res.geometry.coordinates.map(c=>[c[1],c[0]]);
-        allCoords.push(...coords);
-        L.polyline(coords,{color:"#ff6b35",weight:3.5,opacity:.85}).addTo(multiRouteLayer);
-      }
-    } else {
-      // fallback line
-      L.polyline([[from.COORDENADA_Y,from.COORDENADA_X],[to.COORDENADA_Y,to.COORDENADA_X]],{color:"#f59e0b",weight:2,dashArray:"6,4",opacity:.7}).addTo(multiRouteLayer);
-      const c=haversine(from.COORDENADA_X,from.COORDENADA_Y,to.COORDENADA_X,to.COORDENADA_Y)*1.35;
-      totalDist+=c;totalTime+=(c/80)*3600;
-      allCoords.push([from.COORDENADA_Y,from.COORDENADA_X],[to.COORDENADA_Y,to.COORDENADA_X]);
-    }
-    await sleep(100);
-  }
-  overlay.classList.remove("on");
-  // Draw numbered stop markers
-  points.forEach((p,i)=>{
-    const color=i===0?"#ff6b35":"#ff6b35";
-    const r=i===0?12:10;
-    L.circleMarker([p.COORDENADA_Y,p.COORDENADA_X],{radius:r,color:"#fff",weight:2,fill:true,fillColor:color,fillOpacity:.9})
-      .bindTooltip(i===0?`Salida: APIES ${p.APIES}`:`${i}. APIES ${p.APIES} - ${p.LOCALIDAD}`,{permanent:false,direction:"top"}).addTo(multiRouteLayer);
-  });
-  if(allCoords.length>0)map.fitBounds(L.latLngBounds(allCoords),{padding:[40,40]});
-  const legType=roadUsed>0?`${roadUsed}/${points.length-1} tramos por carretera real`:"Estimados (OSRM no disponible)";
-  toast(`Ruta: ${totalDist.toFixed(0)} km · ${fmtTimeL(totalTime)} · ${legType}`);
-}
-
-// Google Maps multi-parada
-function openMultiGmaps(){
-  const dep=getDepStation();if(!dep||multiSelection.length<1)return;
-  const stops=multiSelection.map(a=>STATIONS.find(s=>s.APIES===a));
-  const MAX_STOPS=10;
-  const allStops=[dep,...stops];
-  const limited=allStops.slice(0,MAX_STOPS);
-  const origin=encodeURIComponent(`${limited[0].COORDENADA_Y},${limited[0].COORDENADA_X}`);
-  const dest=encodeURIComponent(`${limited[limited.length-1].COORDENADA_Y},${limited[limited.length-1].COORDENADA_X}`);
-  const waypoints=limited.slice(1,-1).map(p=>encodeURIComponent(`${p.COORDENADA_Y},${p.COORDENADA_X}`)).join("%7C");
-  let url=`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
-  if(waypoints)url+=`&waypoints=${waypoints}`;
-  window.open(url,"_blank");
-  if(allStops.length>MAX_STOPS)toast(`Google Maps: max ${MAX_STOPS} paradas. Se abrieron las primeras ${MAX_STOPS}.`);
-}
-
-// ── PDF ITINERARIO ──
-async function exportItinerarioPDF(){
-  const dep=getDepStation();
-  if(!dep||multiSelection.length<1){toast("Selecciona punto de partida y al menos 2 paradas");return;}
-  toast("Generando PDF...");
-
-  // Load jsPDF
-  if(!window.jspdf){
-    await new Promise(res=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";s.onload=res;document.head.appendChild(s);});
-    await new Promise(res=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js";s.onload=res;document.head.appendChild(s);});
-  }
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
-  const PW=210,PH=297,ML=14,MR=196,CW=PW-ML*2;
-  const now=new Date();
-  const dateStr=now.toLocaleDateString("es-AR",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-  const timeStr=now.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+"hs";
-
-  // Build leg data
-  const points=[dep,...multiSelection.map(a=>STATIONS.find(s=>s.APIES===a))];
-  const legs=[];
-  let totalDist=0,totalTime=0,roadLegs=0;
-  let prevCoords={x:dep.COORDENADA_X,y:dep.COORDENADA_Y};
-  const depIsRef=!multiDepApies||multiDepApies===refApies;
-  multiSelection.forEach((a,i)=>{
-    const s=STATIONS.find(x=>x.APIES===a);
-    const row=rows.find(r=>r.APIES===a);
-    let d,t,method;
-    if(depIsRef&&i===0&&row?.distKm!=null&&row.method==="route"){d=row.distKm;t=row.durSec||0;method="route";}
-    else{d=haversine(prevCoords.x,prevCoords.y,s.COORDENADA_X,s.COORDENADA_Y)*1.35;t=(d/80)*3600;method="est";}
-    if(method==="route")roadLegs++;
-    legs.push({from:i===0?dep:STATIONS.find(x=>x.APIES===multiSelection[i-1]),to:s,distKm:d,durSec:t,method,cumDist:totalDist+d,cumTime:totalTime+t});
-    totalDist+=d;totalTime+=t;prevCoords={x:s.COORDENADA_X,y:s.COORDENADA_Y};
-  });
-  const allEstimated=roadLegs===0;
-
-  // ── PAGE 1 ──
-  let y=0;
-
-  // HEADER BAND
-  doc.setFillColor(1,13,28);
-  doc.rect(0,0,PW,42,"F");
-  // Cyan accent bar
-  doc.setFillColor(0,212,255);
-  doc.rect(0,0,4,42,"F");
-
-  // Logo text
-  doc.setTextColor(0,133,255);
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(22);
-  doc.text("OPESSA",ML+6,16);
-  doc.setTextColor(255,107,53);
-  doc.setFontSize(8);
-  doc.setFont("helvetica","normal");
-  doc.text("Operadora de Estaciones de Servicio",ML+6,21);
-
-  // Divider line
-  doc.setDrawColor(30,45,64);
-  doc.setLineWidth(0.3);
-  doc.line(ML+6,24,MR,24);
-
-  // Title
-  doc.setTextColor(255,255,255);
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(14);
-  doc.text("ITINERARIO DE VIAJE",ML+6,31);
-  doc.setFont("helvetica","normal");
-  doc.setFontSize(8);
-  doc.setTextColor(100,120,140);
-  doc.text(`Generado: ${dateStr}  ·  ${timeStr}`,ML+6,37);
-
-  y=52;
-
-  // SUMMARY CARDS — 4 boxes
-  const cards=[
-    {label:"PARADAS",val:multiSelection.length.toString(),sub:"estaciones",color:[0,212,255]},
-    {label:"DISTANCIA TOTAL",val:`${totalDist.toFixed(0)} km`,sub:"por carretera",color:[16,185,129]},
-    {label:"TIEMPO ESTIMADO",val:fmtTimeL(totalTime),sub:"a 80 km/h promedio",color:[167,139,250]},
-    {label:"MÉTODO",val:roadLegs>0?"Ruta real":"Estimado",sub:roadLegs>0?`${roadLegs}/${legs.length} tramos OSRM`:"Lineal ×1.35",color:[255,107,53]},
-  ];
-  const cardW=(CW-9)/4,cardH=22;
-  cards.forEach((c,i)=>{
-    const cx=ML+i*(cardW+3);
-    doc.setFillColor(8,33,51);
-    doc.roundedRect(cx,y,cardW,cardH,2,2,"F");
-    doc.setDrawColor(...c.color,80);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(cx,y,cardW,cardH,2,2,"S");
-    doc.setFont("helvetica","bold");doc.setFontSize(7);doc.setTextColor(...c.color);
-    doc.text(c.label,cx+3,y+6);
-    doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(220,230,240);
-    doc.text(c.val,cx+3,y+14);
-    doc.setFont("helvetica","normal");doc.setFontSize(6);doc.setTextColor(77,104,128);
-    doc.text(c.sub,cx+3,y+19);
-  });
-  y+=cardH+8;
-
-  // DEPARTURE BLOCK
-  doc.setFillColor(20,30,40);
-  doc.roundedRect(ML,y,CW,12,2,2,"F");
-  doc.setDrawColor(255,107,53);doc.setLineWidth(0.5);
-  doc.line(ML,y,ML,y+12);
-  doc.setFont("helvetica","bold");doc.setFontSize(8);doc.setTextColor(255,107,53);
-  doc.text("PUNTO DE PARTIDA",ML+4,y+5);
-  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(220,230,240);
-  doc.text(`APIES ${dep.APIES}  ·  ${dep.OPERADOR}`,ML+4,y+10);
-  doc.setTextColor(77,104,128);doc.setFontSize(7);
-  doc.text(`${dep.LOCALIDAD}  ·  ${dep.PROVINCIA||""}  ·  ${dep.DIRECCION}`,PW-ML,y+10,"right");
-  y+=18;
-
-  // STOPS TABLE
-  doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(0,133,255);
-  doc.text("DETALLE DE PARADAS",ML,y);
-  y+=4;
-
-  const tableHead=[["#","APIES","Estación","Ciudad · Provincia","Dist. tramo","Dist. acum.","Tiempo tramo","Tiempo acum."]];
-  const tableBody=legs.map((leg,i)=>{
-    const isEst=leg.method==="est";
-    return[
-      `${i+1}`,
-      `${leg.to.APIES}`,
-      leg.to.OPERADOR.replace("OPESSA ",""),
-      `${leg.to.LOCALIDAD} · ${leg.to.PROVINCIA||""}`,
-      `${leg.distKm.toFixed(1)} km${isEst?" *":""}`,
-      `${leg.cumDist.toFixed(1)} km`,
-      fmtTimeL(leg.durSec),
-      fmtTimeL(leg.cumTime),
-    ];
-  });
-
-  doc.autoTable({
-    startY:y,
-    head:tableHead,
-    body:tableBody,
-    margin:{left:ML,right:ML},
-    styles:{font:"helvetica",fontSize:7.5,cellPadding:2.5,textColor:[200,215,230],fillColor:[13,21,32],lineColor:[30,45,64],lineWidth:0.3},
-    headStyles:{fillColor:[7,9,15],textColor:[0,212,255],fontStyle:"bold",fontSize:7,halign:"center"},
-    alternateRowStyles:{fillColor:[17,29,46]},
-    columnStyles:{
-      0:{halign:"center",cellWidth:7},
-      1:{halign:"center",cellWidth:14},
-      2:{cellWidth:46},
-      3:{cellWidth:36},
-      4:{halign:"right",cellWidth:22},
-      5:{halign:"right",cellWidth:22},
-      6:{halign:"right",cellWidth:20},
-      7:{halign:"right",cellWidth:20},
-    },
-    didParseCell:(d)=>{
-      if(d.section==="body"&&d.column.index===0){d.cell.styles.textColor=[0,212,255];d.cell.styles.fontStyle="bold";}
-    },
-    didDrawPage:(d)=>{
-      // Footer on every page
-      doc.setFillColor(1,13,28);doc.rect(0,PH-10,PW,10,"F");
-      doc.setDrawColor(0,133,255);doc.setLineWidth(0.2);doc.line(0,PH-10,PW,PH-10);
-      doc.setFont("helvetica","normal");doc.setFontSize(6);doc.setTextColor(77,104,128);
-      doc.text("OPESSA · Itinerario de Viaje · Herramienta de Distancias",ML,PH-5);
-      doc.text(`Pág. ${d.pageNumber} de ${doc.internal.getNumberOfPages()}`,PW-ML,PH-5,"right");
-    },
-  });
-
-  y=doc.lastAutoTable.finalY+10;
-
-  // PROVINCE SUMMARY
-  const provMap={};
-  multiSelection.forEach(a=>{const s=STATIONS.find(x=>x.APIES===a);const p=s.PROVINCIA||"Otra";provMap[p]=(provMap[p]||0)+1;});
-  const provList=Object.entries(provMap).sort((a,b)=>b[1]-a[1]);
-
-  // Check if we have space, else new page
-  if(y>PH-60){doc.addPage();y=20;}
-
-  doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(0,133,255);
-  doc.text("RESUMEN POR PROVINCIA",ML,y);y+=5;
-  const provBoxW=(CW-(provList.length-1)*3)/Math.max(provList.length,1);
-  provList.forEach((pv,i)=>{
-    const bx=ML+i*(provBoxW+3);
-    doc.setFillColor(8,33,51);doc.roundedRect(bx,y,provBoxW,14,2,2,"F");
-    doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(220,230,240);
-    doc.text(`${pv[1]}`,bx+provBoxW/2,y+7,"center");
-    doc.setFont("helvetica","normal");doc.setFontSize(6.5);doc.setTextColor(77,104,128);
-    doc.text(pv[0],bx+provBoxW/2,y+12,"center");
-  });
-  y+=20;
-
-  // QR CODE (Google Maps link)
-  const gmapsUrl=buildGmapsUrl(dep,multiSelection);
-  // Generate QR using QRServer API (image fetch)
-  const qrSize=38;
-  try{
-    const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(gmapsUrl)}&bgcolor=010d1c&color=0085ff&margin=5`;
-    const qrImg=await loadImage(qrUrl);
-    if(y+qrSize+25>PH-15){doc.addPage();y=20;}
-    // QR section
-    doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(0,133,255);
-    doc.text("ABRIR RUTA EN GOOGLE MAPS",ML,y);y+=4;
-    doc.addImage(qrImg,"PNG",ML,y,qrSize,qrSize);
-    doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(180,200,220);
-    doc.text("Escaneá el código QR para abrir",ML+qrSize+6,y+8);
-    doc.text("la ruta en Google Maps con todas",ML+qrSize+6,y+13);
-    doc.text("las paradas del itinerario.",ML+qrSize+6,y+18);
-    doc.setTextColor(0,133,255);doc.setFontSize(6);
-    // Show short URL hint
-    doc.text("(max. 10 paradas en Maps)",ML+qrSize+6,y+24);
-    y+=qrSize+8;
-  }catch(e){
-    doc.setFont("helvetica","normal");doc.setFontSize(7);doc.setTextColor(77,104,128);
-    doc.text("(QR no disponible sin conexion)",ML,y+8);y+=16;
-  }
-
-  // NOTES
-  if(y+25>PH-15){doc.addPage();y=20;}
-  doc.setDrawColor(30,45,64);doc.setLineWidth(0.3);doc.line(ML,y,MR,y);y+=6;
-  doc.setFont("helvetica","bold");doc.setFontSize(8);doc.setTextColor(100,120,140);
-  doc.text("NOTAS",ML,y);y+=5;
-  doc.setFont("helvetica","normal");doc.setFontSize(7);doc.setTextColor(77,104,128);
-  if(!allEstimated){
-    doc.text("Los tramos marcados con (*) son distancias estimadas por carretera (lineal x1.35) porque OSRM no pudo",ML,y);y+=4;
-    doc.text("calcular la ruta exacta para ese segmento.",ML,y);y+=6;
-  }
-  doc.text("Los tiempos estimados se calculan a una velocidad promedio de 80 km/h sin considerar paradas, trafico ni peajes.",ML,y);y+=5;
-  doc.text("Las distancias por carretera fueron calculadas usando OSRM / OpenStreetMap.",ML,y);
-
-  // Footer on last page if autoTable didn't draw it
-  const totalPages=doc.internal.getNumberOfPages();
-  for(let pg=1;pg<=totalPages;pg++){
-    doc.setPage(pg);
-    doc.setFillColor(1,13,28);doc.rect(0,PH-10,PW,10,"F");
-    doc.setDrawColor(0,133,255);doc.setLineWidth(0.2);doc.line(0,PH-10,PW,PH-10);
-    doc.setFont("helvetica","normal");doc.setFontSize(6);doc.setTextColor(77,104,128);
-    doc.text("OPESSA · Itinerario de Viaje · Herramienta de Distancias",ML,PH-5);
-    doc.text(`Pag. ${pg} de ${totalPages}`,PW-ML,PH-5,"right");
-  }
-
-  doc.save(`itinerario_opessa_${now.toISOString().slice(0,10)}.pdf`);
-  toast("✓ Itinerario exportado como PDF");
-}
-
-function buildGmapsUrl(dep,sel){
-  const stops=sel.map(a=>STATIONS.find(s=>s.APIES===a));
-  const all=[dep,...stops];const lim=all.slice(0,10);
-  const origin=encodeURIComponent(`${lim[0].COORDENADA_Y},${lim[0].COORDENADA_X}`);
-  const dest=encodeURIComponent(`${lim[lim.length-1].COORDENADA_Y},${lim[lim.length-1].COORDENADA_X}`);
-  const waypoints=lim.slice(1,-1).map(p=>encodeURIComponent(`${p.COORDENADA_Y},${p.COORDENADA_X}`)).join("%7C");
-  let url=`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
-  if(waypoints)url+=`&waypoints=${waypoints}`;
-  return url;
-}
-
-function loadImage(url){
-  return new Promise((res,rej)=>{
-    const img=new Image();img.crossOrigin="anonymous";
-    img.onload=()=>res(img);img.onerror=rej;img.src=url;
-  });
-}
-
-
-function exportCSV(){
-  const h=["APIES","OPERADOR","PROVINCIA","LOCALIDAD","DIRECCION","COORDENADA_X","COORDENADA_Y",`DISTANCIA_CON_APIES_${refApies}_km`,"TIEMPO_ESTIMADO","METODO"];
-  const body=rows.map(r=>[r.APIES,`"${r.OPERADOR}"`,`"${r.PROVINCIA||""}"`,`"${r.LOCALIDAD}"`,`"${r.DIRECCION}"`,r.COORDENADA_X,r.COORDENADA_Y,
-    r.APIES===refApies?"PUNTO BASE":(r.distKm!=null?r.distKm.toFixed(2):""),
-    r.APIES===refApies?"PUNTO BASE":fmtTimeL(r.durSec),r.method||""]);
-  const csv=[h.join(","),...body.map(r=>r.join(","))].join("\n");
-  const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"})),download:`distancias_apies_${refApies}.csv`});
-  a.click();URL.revokeObjectURL(a.href);toast("CSV exportado");
-}
-function exportXLSX(){if(!window.XLSX){const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";s.onload=doXLSX;document.head.appendChild(s);}else doXLSX();}
-function doXLSX(){
-  const XLSX=window.XLSX;
-  const data=[["APIES","OPERADOR","PROVINCIA","LOCALIDAD","DIRECCION","COORDENADA X","COORDENADA Y",`DISTANCIA CON APIES ${refApies} (km)`,"TIEMPO ESTIMADO","METODO"]];
-  rows.forEach(r=>data.push([r.APIES,r.OPERADOR,r.PROVINCIA||"",r.LOCALIDAD,r.DIRECCION,r.COORDENADA_X,r.COORDENADA_Y,
-    r.APIES===refApies?"PUNTO BASE":(r.distKm!=null?parseFloat(r.distKm.toFixed(2)):""),
-    r.APIES===refApies?"PUNTO BASE":fmtTimeL(r.durSec),
-    r.method==="route"?"Ruta real (OSRM)":r.method==="linear"?"Dist lineal x1.35":r.method==="ref"?"Punto base":""]));
-  const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(data);
-  ws["!cols"]=[{wch:10},{wch:34},{wch:16},{wch:20},{wch:42},{wch:14},{wch:14},{wch:26},{wch:16},{wch:22}];
-  XLSX.utils.book_append_sheet(wb,ws,`Distancias APIES ${refApies}`);
-  XLSX.writeFile(wb,`distancias_apies_${refApies}.xlsx`);toast("Excel exportado");
-}
-
-let toastT;function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),4000);}
+populateSelects();
+renderList();
+renderMultiList();
+new SearchableSelect("refSel","Buscar estación...");
+new SearchableSelect("routeA","Buscar origen...");
+new SearchableSelect("routeB","Buscar destino...");
+new SearchableSelect("multiDepSel","Buscar punto de partida...");
+new SearchableSelect("filterProv","Todas las provincias");
+new SearchableSelect("sortSel");
+initMobileDrag();
 </script>
 </body>
 </html>
