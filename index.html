@@ -614,7 +614,29 @@ class SearchableSelect{
   const psel=document.getElementById("filterProv");
   provs.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p==="all"?"Todas las provincias":p;psel.appendChild(o);});
   document.getElementById("refSel").value="99010";
-  onRefChange(false);initMarkers();renderList();renderMultiList();
+  onRefChange(false);
+  // Pre-compute haversine distances from APIES 99010 — instant, no API needed
+  (function preload(){
+    const ref=STATIONS.find(s=>s.APIES===99010);if(!ref)return;
+    let maxD=0;
+    rows.forEach(r=>{
+      if(r.APIES===99010){r.distKm=0;r.durSec=0;r.method="ref";r.status="ref";return;}
+      const d=haversine(ref.COORDENADA_X,ref.COORDENADA_Y,r.COORDENADA_X,r.COORDENADA_Y)*1.35;
+      r.distKm=d;r.durSec=(d/80)*3600;r.method="linear";r.status="done";
+      if(d>maxD)maxD=d;
+    });
+    maxDist=maxD;
+    const am=Math.ceil(maxD/100)*100+100;
+    ["rangeMax","mRangeMax"].forEach(id=>{const el=document.getElementById(id);el.max=am;el.value=am;});
+    rangeMax=am;mRangeMax=am;
+    document.getElementById("rangeMaxLbl").textContent="Max";
+    document.getElementById("mRangeMaxLbl").textContent="Max";
+    document.getElementById("rangeFill").style.width="100%";
+    document.getElementById("mRangeFill").style.width="100%";
+    document.getElementById("btnXlsx").disabled=false;
+    document.getElementById("btnCsv").disabled=false;
+  })();
+  initMarkers();updateStats();renderList();renderMultiList();
   // Searchable selects
   new SearchableSelect("refSel","Buscar estación...");
   new SearchableSelect("routeA","Buscar origen...");
@@ -623,8 +645,6 @@ class SearchableSelect{
   new SearchableSelect("filterProv","Todas las provincias");
   new SearchableSelect("sortSel");
   _csInstances["refSel"]?.refresh();
-  // Auto-start distance calculation from APIES 99010
-  setTimeout(startCalc, 600);
 })();
 
 function onRefChange(doReset=true){
@@ -767,6 +787,8 @@ async function startCalc(){
   const ref=STATIONS.find(s=>s.APIES===refApies);
   const refRow=rows.find(r=>r.APIES===refApies);
   if(refRow){refRow.status="ref";refRow.distKm=0;refRow.durSec=0;refRow.method="ref";}
+  // Reset all non-ref rows so OSRM recalculates them all
+  rows.filter(r=>r.APIES!==refApies).forEach(r=>r.status="pending");
   const testTarget=STATIONS.find(s=>s.APIES!==refApies);
   const testOk=await fetchRoute(ref.COORDENADA_X,ref.COORDENADA_Y,testTarget.COORDENADA_X,testTarget.COORDENADA_Y);
   const pending=rows.filter(r=>r.APIES!==refApies&&r.status==="pending");
